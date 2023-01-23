@@ -11,7 +11,7 @@ func requetOpenAI(chatGpt *ChatGpt, input string) (string, error) {
 	chatGpt.history = append(chatGpt.history, input)
 	inp := strings.Join(chatGpt.history, " ")
 	req := gogpt.CompletionRequest{
-		Model:            "text-davinci-003",
+		Model:            chatGpt.Model,
 		MaxTokens:        int(chatGpt.MaxTokens),
 		Prompt:           inp,
 		Temperature:      float32(chatGpt.Temperature),
@@ -20,10 +20,12 @@ func requetOpenAI(chatGpt *ChatGpt, input string) (string, error) {
 		PresencePenalty:  float32(chatGpt.PresencePenalty),
 	}
 	resp, err := chatGpt.c.CreateCompletion(chatGpt.ctx, req)
-	ret = strings.TrimPrefix(resp.Choices[0].Text, "\n")
 	if err != nil {
 		return ret, err
 	}
-	chatGpt.history = append(chatGpt.history, ret)
+	if len(resp.Choices) > 0 {
+		ret = strings.TrimPrefix(resp.Choices[0].Text, "\n")
+		chatGpt.history = append(chatGpt.history, ret)
+	}
 	return ret, nil
 }

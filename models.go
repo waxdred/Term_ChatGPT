@@ -18,6 +18,7 @@ type ChatGpt struct {
 	history          []string
 	ctx              context.Context
 	c                *gogpt.Client
+	Model            string
 	Temperature      float64
 	TopP             float64
 	FrequencyPenalty float64
@@ -32,6 +33,7 @@ func (chat *ChatGpt) Init() {
 		os.Exit(-1)
 	}
 	chat.user = os.Getenv("USER") + ":"
+	chat.Model = "text-davinci-003"
 	chat.c = gogpt.NewClient(chat.api)
 	chat.ctx = context.Background()
 	chat.Temperature = 0.9
@@ -42,16 +44,24 @@ func (chat *ChatGpt) Init() {
 }
 
 type model struct {
-	chatGpt  *ChatGpt
-	apikey   string
-	content  string
-	ready    bool
-	message  []string
-	viewport viewport.Model
-	textarea textarea.Model
+	chatGpt         *ChatGpt
+	apikey          string
+	content         string
+	ready           bool
+	message         []string
+	viewport        viewport.Model
+	textarea        textarea.Model
+	prompt          bool
+	chat            bool
+	session         bool
+	setting         bool
+	selectorSetting int8
+	selectorSession int64
+	typing          bool
 }
 
 func (m model) Init() tea.Cmd {
+	m.typing = true
 	return textarea.Blink
 }
 
@@ -60,8 +70,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		tiCmd tea.Cmd
 		vpCmd tea.Cmd
 	)
-
-	m.textarea, tiCmd = m.textarea.Update(msg)
+	if m.typing {
+		m.textarea, tiCmd = m.textarea.Update(msg)
+	}
 	m.viewport, vpCmd = m.viewport.Update(msg)
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
@@ -69,21 +80,82 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			fmt.Println(m.textarea.Value())
 			return m, tea.Quit
 		}
+		switch msg.String() {
+		case "ctrl+k":
+			if m.setting {
+				if m.selectorSetting == 1 && m.chatGpt.FrequencyPenalty < 2.0 {
+					m.chatGpt.FrequencyPenalty = m.chatGpt.FrequencyPenalty + 0.1
+				} else if m.selectorSetting == 2 && m.chatGpt.PresencePenalty < 2.0 {
+					m.chatGpt.PresencePenalty = m.chatGpt.PresencePenalty + 0.1
+				} else if m.selectorSetting == 3 && m.chatGpt.Temperature < 2 {
+					m.chatGpt.Temperature = m.chatGpt.Temperature + 0.1
+				} else if m.selectorSetting == 4 && m.chatGpt.MaxTokens < 4000 {
+					m.chatGpt.MaxTokens += 10
+				} else if m.selectorSetting == 5 && m.chatGpt.TopP < 1 {
+					m.chatGpt.TopP = m.chatGpt.TopP + 0.1
+				}
+			}
+		case "ctrl+j":
+			if m.setting {
+				if m.selectorSetting == 1 && m.chatGpt.FrequencyPenalty > -2.0 {
+					m.chatGpt.FrequencyPenalty = m.chatGpt.FrequencyPenalty - 0.1
+				} else if m.selectorSetting == 2 && m.chatGpt.PresencePenalty > -2.0 {
+					m.chatGpt.PresencePenalty = m.chatGpt.PresencePenalty - 0.1
+				} else if m.selectorSetting == 3 && m.chatGpt.Temperature > 0.10 {
+					m.chatGpt.Temperature = m.chatGpt.Temperature - 0.1
+				} else if m.selectorSetting == 4 && m.chatGpt.MaxTokens > 0 {
+					m.chatGpt.MaxTokens -= 10
+				} else if m.selectorSetting == 5 && m.chatGpt.TopP > 0.10 {
+					m.chatGpt.TopP = m.chatGpt.TopP - 0.1
+				}
+			}
+		}
 		switch msg.Type {
 		case tea.KeyEnter:
-			render := fmt.Sprintf("%s\n\n%s", TitleUser.Render(m.chatGpt.user), m.textarea.Value())
-			m.content = m.content + "\n" + styleUser.Render(render) + "\n"
-			chatGpt, err := requetOpenAI(m.chatGpt, m.textarea.Value())
-			if err != nil {
-				m.viewport.SetContent(err.Error())
-				return m, nil
+			m.typing = false
+			if m.prompt && m.textarea.Value() != "" {
+				render := fmt.Sprintf("%s\n%s", TitleUser.Render(m.chatGpt.user), m.textarea.Value())
+				m.content = m.content + "\n" + styleUser.Render(render) + "\n"
+				chatGpt, err := requetOpenAI(m.chatGpt, m.textarea.Value())
+				if err != nil {
+					m.viewport.SetContent(err.Error())
+					return m, nil
+				}
+				if chatGpt != "" {
+					render := fmt.Sprintf("%s%s", TitleGpt.Render("Chat_GPT:"), chatGpt)
+					m.content = m.content + styleGpt.Render(render)
+					m.viewport.SetContent(m.content)
+					m.textarea.Reset()
+					m.viewport.GotoBottom()
+				}
+				m.typing = true
 			}
-			if chatGpt != "" {
-				render := fmt.Sprintf("%s\n%s", TitleGpt.Render("Chat_GPT:"), chatGpt)
-				m.content = m.content + styleGpt.Render(render)
-				m.viewport.SetContent(m.content)
-				m.textarea.Reset()
-				m.viewport.GotoBottom()
+		case tea.KeyTab:
+			m.typing = false
+			if m.prompt {
+				m.prompt = false
+				m.setting = true
+			} else if m.setting {
+				m.setting = false
+				m.session = true
+			} else if m.session {
+				m.session = false
+				m.prompt = true
+				m.typing = true
+			}
+		case tea.KeyUp:
+			if m.setting {
+				m.selectorSetting--
+				if m.selectorSetting <= 0 {
+					m.selectorSetting = 5
+				}
+			}
+		case tea.KeyDown:
+			if m.setting {
+				m.selectorSetting++
+				if m.selectorSetting >= 6 {
+					m.selectorSetting = 1
+				}
 			}
 		}
 	case tea.WindowSizeMsg:
@@ -107,16 +179,50 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m model) View() string {
+	var prompt lipgloss.Style
+	var session lipgloss.Style
+	var setting lipgloss.Style
+	if m.prompt {
+		prompt = styleBorderPromptSelect
+	} else {
+		prompt = styleBorderPrompt
+	}
+	if m.setting {
+		setting = styleBorderSettingSelect
+	} else {
+		setting = styleBorderSetting
+	}
+	if m.session {
+		session = styleBorderHistorySelect
+	} else {
+		session = styleBorderHistory
+	}
 	if !m.ready {
 		return "\n  Initializing..."
 	}
 	msg := fmt.Sprintf("%s", m.viewport.View())
-	msg = lipgloss.JoinVertical(lipgloss.Top, TopBorderText(Wwidth-int(Wwidth/3), " Chat GPT ", true), styleBorder.Render(msg))
-	msg = lipgloss.JoinVertical(
+	ChatGpt := lipgloss.JoinVertical(
 		lipgloss.Top,
-		msg,
-		TopBorderText(Wwidth-int(Wwidth/3), " Prompt ", false),
-		styleBorderPrompt.Render(m.textarea.View()),
+		TopBorderText(Wwidth-int(Wwidth/3), " Chat GPT ", true, false),
+		styleBorder.Render(msg),
 	)
-	return msg
+	ChatGptPrompt := lipgloss.JoinVertical(
+		lipgloss.Top,
+		ChatGpt,
+		TopBorderText(Wwidth-int(Wwidth/3), " Prompt ", false, m.prompt),
+		prompt.Render(m.textarea.View()),
+	)
+	Setting := lipgloss.JoinVertical(
+		lipgloss.Top,
+		TopBorderText(int(Wwidth/3)-10, " Setting ", true, m.setting),
+		setting.Render(formatSetting(m.chatGpt, int(m.selectorSetting))),
+	)
+	History := lipgloss.JoinVertical(
+		lipgloss.Top,
+		Setting,
+		TopBorderText(int(Wwidth/3)-10, " Session ", false, m.session),
+		session.Render(""),
+	)
+	ret := lipgloss.JoinHorizontal(lipgloss.Top, ChatGptPrompt, History)
+	return ret
 }
