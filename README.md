@@ -6,6 +6,16 @@
 With `ChatGPT`, you can ask questions and get answers from GPT-3 in real-time.
 and save your sessions for future use
 
+
+The Neovim_ChatGPT plugin is a powerful tool that allows users to interact with OpenAI's GPT-3 language model directly from their Neovim editor or terminal. With this plugin, users can ask any question and get accurate, relevant answers in real-time. The plugin also allows users to save their sessions for future use, making it easy to continue conversations or pick up where they left off.
+
+The main benefits of this plugin include:
+
+- Convenient and easy access to the power of GPT-3 language model from within Neovim or terminal.
+- Real-time answers to any question, making it a valuable tool for research, writing, or any other task that        requires quick and accurate information.
+- The ability to save and continue sessions for later use, making it a more efficient tool for tasks that require multiple interactions with the language model.
+- A simple and user-friendly interface that makes it easy for anyone to use.
+
 `Plugin create in Goland using charmbracelet/bubbles`
 
 ## App chatGpt can be use on your terminal or on Neovim
