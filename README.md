@@ -1,7 +1,9 @@
 ![GitHub Workflow Status](https://github.com/waxdred/Term_ChatGPT/actions/workflows/default.yml/badge.svg)
 ![GoDoc](https://godoc.org/github.com/golang/gddo?status.svg)
 # Neovim_ChatGPT
+## App chatGpt can be use on your terminal or on Neovim
 
+#Running on Neovim
 ![](https://i.imgur.com/A6lLV8E.png)
 
 `Plugin working but still in Progress`
