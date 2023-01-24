@@ -1,4 +1,4 @@
-[GitHub Workflow Status](https://github.com/waxdred/Term_ChatGPT/actions/workflows/default.yml/badge.svg)
+![GitHub Workflow Status](https://github.com/waxdred/Term_ChatGPT/actions/workflows/default.yml/badge.svg)
 ![Go](https://img.shields.io/badge/Made%20with%20Goland-blue.svg?style=for-the-badge&logo=goland)
 # Neovim_ChatGPT
 
