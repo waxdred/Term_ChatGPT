@@ -62,6 +62,13 @@ cd Term_ChatGPT/bin
 
 Plugin exposes following commands on Neovim:
 - `:ChatGPT` command which opens interactive window.
+# Setting:
+- temperature:`0 | 1`
+- topP: `0 | 1`
+- frequency: `-2 | 2`
+- presence: `-2 | 2`
+- maxToken: `0 | 4000`
+- for more informations about it [https://beta.openai.com/docs/guides/completion/prompt-design]
 
 Available keybindings are:
 - `<Esc>` to close chat window.
