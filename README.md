@@ -15,15 +15,12 @@ The main benefits of this plugin include:
 - Real-time answers to any question, making it a valuable tool for research, writing, or any other task that        requires quick and accurate information.
 - The ability to save and continue sessions for later use, making it a more efficient tool for tasks that require multiple interactions with the language model.
 - A simple and user-friendly interface that makes it easy for anyone to use.
-
-`Plugin create in Goland using charmbracelet/bubbles`
+- Plugin create in Goland using library `charmbracelet/bubbles`
 
 ## App chatGpt can be use on your terminal or on Neovim
 
 ## Running on Neovim
 ![](https://i.imgur.com/A6lLV8E.png)
-
-`Plugin working but still in Progress`
 
 ## Requirements
 - Neovim: The plugin is designed to work with Neovim, so you'll need to have Neovim installed on your machine. You should have at least version 0.5.0 of Neovim, but it's recommended to use the latest version for the best experience.
