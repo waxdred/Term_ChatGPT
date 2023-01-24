@@ -12,7 +12,13 @@ const useHighPerformanceRenderer = false
 var (
 	fd                 = int(os.Stdout.Fd())
 	Wwidth, Wheight, _ = terminal.GetSize(fd)
-	heightPrompt       = 1
+	WeightSet          = 23
+	WeightChat         = Wwidth - WeightSet - 8
+
+	heightPrompt  = 1
+	heightSetting = 6
+	heightSession = Wheight - heightSetting - 7
+	heightChat    = Wheight - heightPrompt - 7
 )
 
 var (
@@ -40,7 +46,7 @@ var (
 	styleBorder = lipgloss.NewStyle().
 			Border(lipgloss.RoundedBorder()).
 			PaddingRight(2).PaddingLeft(2).
-			Width(Wwidth - int(Wwidth/3)).MarginLeft(1).Height(Wheight - 8).
+			Width(WeightChat).MarginLeft(1).Height(heightChat).
 			BorderForeground(lipgloss.Color(blue)).
 			BorderTop(false)
 
@@ -48,7 +54,7 @@ var (
 
 	styleBorderSetting = lipgloss.NewStyle().
 				Border(lipgloss.RoundedBorder()).
-				PaddingRight(2).PaddingLeft(2).Width(int(Wwidth/3) - 10).MarginLeft(1).Height(6).
+				PaddingRight(2).PaddingLeft(2).Width(WeightSet).MarginLeft(1).Height(heightSetting).
 				BorderForeground(lipgloss.Color(blue)).
 				BorderTop(false)
 
@@ -57,24 +63,23 @@ var (
 	styleBorderHistory = lipgloss.NewStyle().
 				Border(lipgloss.RoundedBorder()).
 				PaddingRight(2).PaddingLeft(2).
-				Width(int(Wwidth/3) - 10).MarginLeft(1).Height(Wheight - 6 - 8 - 2).
+				Width(WeightSet).MarginLeft(1).Height(heightSession).
 				BorderForeground(lipgloss.Color(blue)).
 				BorderTop(false)
 
 	styleBorderHistorySelect = styleBorderHistory.Copy().BorderForeground(lipgloss.Color(blueSelect))
 	styleBorderPrompt        = lipgloss.NewStyle().
 					Border(lipgloss.RoundedBorder()).
-					Width(Wwidth - int(Wwidth/3)).MarginLeft(1).Height(heightPrompt).
+					Width(WeightChat).MarginLeft(1).Height(heightPrompt).
 					BorderForeground(lipgloss.Color(blue)).
 					BorderTop(false)
 
 	styleBorderPromptSelect = styleBorderPrompt.Copy().BorderForeground(lipgloss.Color(blueSelect))
 
-	styleUser = lipgloss.NewStyle().MarginLeft((Wwidth / 3) - 5).
-			Width((Wwidth - int(Wwidth/3)) / 2).
-			Border(lipgloss.RoundedBorder())
+	styleUser = lipgloss.NewStyle().MarginLeft(WeightChat/2 + 5).
+			Width((WeightChat/2 - 2))
 
-	styleGpt = lipgloss.NewStyle().Width((Wwidth - int(Wwidth/3)) / 2).
+	styleGpt = lipgloss.NewStyle().Width(WeightChat / 2).
 			Border(lipgloss.RoundedBorder()).
 			PaddingRight(1).PaddingLeft(1)
 

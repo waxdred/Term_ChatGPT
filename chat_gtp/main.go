@@ -20,8 +20,8 @@ func main() {
 	ta.Placeholder = "Send a message..."
 	ta.Prompt = "> "
 	ta.Focus()
-	ta.CharLimit = 4080
-	ta.SetWidth(int(Wwidth - (Wwidth / 3)))
+	ta.CharLimit = 1000
+	ta.SetWidth(WeightChat)
 	ta.SetHeight(heightPrompt)
 	ta.FocusedStyle.CursorLine = lipgloss.NewStyle()
 	ta.ShowLineNumbers = false

@@ -58,6 +58,7 @@ type model struct {
 	selectorSetting int8
 	selectorSession int64
 	typing          bool
+	last_answer     string
 }
 
 func (m model) Init() tea.Cmd {
@@ -122,9 +123,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					return m, nil
 				}
 				if chatGpt != "" {
-					render := fmt.Sprintf("%s%s", TitleGpt.Render("Chat_GPT:"), chatGpt)
+					render := fmt.Sprintf("%s\n%s", TitleGpt.Render("Chat_GPT:"), chatGpt)
 					m.content = m.content + styleGpt.Render(render)
 					m.viewport.SetContent(m.content)
+					m.last_answer = chatGpt
 					m.textarea.Reset()
 					m.viewport.GotoBottom()
 				}
@@ -160,15 +162,15 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	case tea.WindowSizeMsg:
 		if !m.ready {
-			m.viewport = viewport.New(Wwidth-int(Wwidth/3), Wheight-8)
+			m.viewport = viewport.New(WeightChat, Wheight-8)
 			m.viewport.YPosition = 4
 			m.viewport.HighPerformanceRendering = useHighPerformanceRenderer
-			text := wrap.String(m.content, Wwidth-int(Wwidth/3))
+			text := wrap.String(m.content, WeightChat)
 			m.viewport.SetContent(text)
 			m.ready = true
-			m.viewport.YPosition = Wheight + 1
+			m.viewport.YPosition = WeightChat + 1
 		} else {
-			m.viewport.Width = Wwidth - int(Wwidth/3)
+			m.viewport.Width = WeightChat
 			m.viewport.Height = Wheight - 8
 		}
 	}
@@ -203,24 +205,24 @@ func (m model) View() string {
 	msg := fmt.Sprintf("%s", m.viewport.View())
 	ChatGpt := lipgloss.JoinVertical(
 		lipgloss.Top,
-		TopBorderText(Wwidth-int(Wwidth/3), " Chat GPT ", true, false),
+		TopBorderText(WeightChat, " Chat GPT ", true, false),
 		styleBorder.Render(msg),
 	)
 	ChatGptPrompt := lipgloss.JoinVertical(
 		lipgloss.Top,
 		ChatGpt,
-		TopBorderText(Wwidth-int(Wwidth/3), " Prompt ", false, m.prompt),
+		TopBorderText(WeightChat, " Prompt ", false, m.prompt),
 		prompt.Render(m.textarea.View()),
 	)
 	Setting := lipgloss.JoinVertical(
 		lipgloss.Top,
-		TopBorderText(int(Wwidth/3)-10, " Setting ", true, m.setting),
+		TopBorderText(WeightSet, " Setting ", true, m.setting),
 		setting.Render(formatSetting(m.chatGpt, int(m.selectorSetting))),
 	)
 	History := lipgloss.JoinVertical(
 		lipgloss.Top,
 		Setting,
-		TopBorderText(int(Wwidth/3)-10, " Session ", false, m.session),
+		TopBorderText(WeightSet, " Session ", false, m.session),
 		session.Render(""),
 	)
 	ret := lipgloss.JoinHorizontal(lipgloss.Top, ChatGptPrompt, History)
