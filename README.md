@@ -32,10 +32,10 @@ Plugin exposes following commands on Neovim:
 - `:ChatGPT` command which opens interactive window.
 
 Available keybindings are:
-- `<C-c>` to close chat window.
+- `<Esc>` to close chat window.
 - `scroll mouse` scroll up chat window.
 - `scroll mouse` scroll down chat window.
-- `<C-y>` to copy/yank last answer in Progress.
+- `<C-y>` to copy/yank last answer.
 - `<C-n>` Start new session in Progress.
 - `<Tab>` Cycle over windows.
 - Setting Window

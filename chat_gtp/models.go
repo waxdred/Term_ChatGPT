@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/atotto/clipboard"
 	"github.com/charmbracelet/bubbles/textarea"
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
@@ -77,11 +78,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	m.viewport, vpCmd = m.viewport.Update(msg)
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		if k := msg.String(); k == "ctrl+c" || k == "esc" {
+		if k := msg.String(); k == "esc" || k == "ctrl+c" {
 			fmt.Println(m.textarea.Value())
 			return m, tea.Quit
 		}
 		switch msg.String() {
+		case "ctrl+y":
+			clipboard.WriteAll(m.last_answer)
 		case "ctrl+k":
 			if m.setting {
 				if m.selectorSetting == 1 && m.chatGpt.FrequencyPenalty < 2.0 {
