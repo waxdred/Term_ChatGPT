@@ -56,5 +56,5 @@ Available keybindings are:
 - `<down>` [Navigate] with arrow
 - Session Window
 - `<Enter>`Select Session
-- `C-d` ddeleted Session
+- `C-d` deleted Session
 - `C-r`rename Session 'in Progress'
