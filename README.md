@@ -25,7 +25,16 @@ The main benefits of this plugin include:
 
 `Plugin working but still in Progress`
 
+## Requirements
+- Neovim: The plugin is designed to work with Neovim, so you'll need to have Neovim installed on your machine. You should have at least version 0.5.0 of Neovim, but it's recommended to use the latest version for the best experience.
 
+- Golang: The plugin is built using the Golang programming language, so you'll need to have Golang installed on your machine. You should have at least version 1.15 of Golang, but it's recommended to use the latest version for the best experience.
+
+- OpenAI API Key: To use the plugin, you'll need to have an API key from OpenAI, which you can obtain by signing up for an account on the OpenAI website. You will need to set an environment variable called $OPENAI_API_KEY with the value of the API key.
+
+- Vim-floaterm: You also need to require the vim-floaterm library, this is for run chatGpt on your terminal
+
+- Packer: You need to use the package manager for installing the plugin, such as vim-plug, dein.vim or Vundle.vim
 
 ## Installation
 
