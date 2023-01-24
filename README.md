@@ -1,3 +1,5 @@
+[GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/waxdred/Term_ChatGPT/default.yml?branch=main&style=for-the-badge/default.yml?branch=main&style=for-the-badge)
+![Go](https://img.shields.io/badge/Made%20with%20Goland-blue.svg?style=for-the-badge&logo=goland)
 # Neovim_ChatGPT
 
 `Plugin working but still in Progress`
