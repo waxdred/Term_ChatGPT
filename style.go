@@ -114,7 +114,7 @@ var (
 				Height(1).Width(WeightSet + 4)
 	colorHelper   = lipgloss.NewStyle().Foreground(lipgloss.Color(greyHelper))
 	Stylehelper   = lipgloss.NewStyle().Foreground(lipgloss.Color(grey)).MarginLeft(2)
-	helperInput   = colorHelper.Render(" <Esc> Exit <Tab> change view <S-Enter>new line")
+	helperInput   = colorHelper.Render(" <C-y> copy <Tab> Cycle over windows")
 	helperSetting = colorHelper.Render(" ⮃ up/down <C-k> or <C-j> change value")
 	helperSession = colorHelper.Render(" ⮃ up/down <Enter> Select")
 )
