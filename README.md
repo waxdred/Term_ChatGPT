@@ -54,3 +54,7 @@ Available keybindings are:
 - `<C-j>` [Change value selection] down the value
 - `<up>` [Navigate] with arrow
 - `<down>` [Navigate] with arrow
+- Session Window
+- `<Enter>`Select Session
+- `C-d` ddeleted Session
+- `C-r`rename Session 'in Progress'
