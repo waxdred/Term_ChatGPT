@@ -46,15 +46,16 @@ func TopBorderText(size int, title string, margin bool, stl bool) string {
 
 func formatSetting(chat *ChatGpt, idx int) string {
 	var freq, pres, temp, maxtoken, top, setting string
-	model := fmt.Sprintf("%s %s", styleSettingTitle.Render("Model:"), styleSettingValue.Render(chat.Model))
+	mds := strings.TrimPrefix(chat.Model, "text-")
+	model := fmt.Sprintf("%s %s", styleSettingTitle.Render("Model:"), styleSettingValue.Render(mds))
 	freq = fmt.Sprintf(
 		"%s %s",
-		styleSettingTitle.Render("Frequency penalty:"),
+		styleSettingTitle.Render("Frequency:"),
 		styleSettingValue.Render(fmt.Sprintf("%.2f", chat.FrequencyPenalty)),
 	)
 	pres = fmt.Sprintf(
 		"%s %s",
-		styleSettingTitle.Render("Presence penalty:"),
+		styleSettingTitle.Render("Presence:"),
 		styleSettingValue.Render(fmt.Sprintf("%.2f", chat.PresencePenalty)),
 	)
 	temp = fmt.Sprintf(
@@ -75,13 +76,13 @@ func formatSetting(chat *ChatGpt, idx int) string {
 	switch idx {
 	case 1:
 		freq = fmt.Sprintf(
-			"> %s %s", styleSettingSelectTitle.Render("Frequency penalty:"),
+			"> %s %s", styleSettingSelectTitle.Render("Frequency:"),
 			styleSettingSelectValue.Render(fmt.Sprintf("%.2f", chat.FrequencyPenalty)),
 		)
 	case 2:
 		pres = fmt.Sprintf(
 			"> %s %s",
-			styleSettingSelectTitle.Render("Presence penalty:"),
+			styleSettingSelectTitle.Render("Presence:"),
 			styleSettingSelectValue.Render(fmt.Sprintf("%.2f", chat.PresencePenalty)),
 		)
 	case 3:
