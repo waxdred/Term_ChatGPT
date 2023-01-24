@@ -62,7 +62,8 @@ cd Term_ChatGPT/bin
 
 Plugin exposes following commands on Neovim:
 - `:ChatGPT` command which opens interactive window.
-# Setting:
+### Setting:
+#### Setting viewPort
 - temperature:`0 | 1`
 - topP: `0 | 1`
 - frequency: `-2 | 2`
