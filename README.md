@@ -1,18 +1,21 @@
 ![GitHub Workflow Status](https://github.com/waxdred/Term_ChatGPT/actions/workflows/default.yml/badge.svg)
 ![GoDoc](https://godoc.org/github.com/golang/gddo?status.svg)
 # Neovim_ChatGPT
-## App chatGpt can be use on your terminal or on Neovim
-
-# Running on Neovim
-![](https://i.imgur.com/A6lLV8E.png)
-
-`Plugin working but still in Progress`
 
 `ChatGPT` is a Neovim plugin or app for your terminal that allows you to interact with OpenAI's GPT-3 language model.
 With `ChatGPT`, you can ask questions and get answers from GPT-3 in real-time.
 Save your `Session` automatic for can use again 
 
-`Plugin create in Goland using charmbracelet/bubbles for the view`
+`Plugin create in Goland using charmbracelet/bubbles`
+
+## App chatGpt can be use on your terminal or on Neovim
+
+-- Running on Neovim
+![](https://i.imgur.com/A6lLV8E.png)
+
+`Plugin working but still in Progress`
+
+
 
 ## Installation
 
