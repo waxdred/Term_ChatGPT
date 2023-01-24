@@ -24,7 +24,7 @@ var (
 var (
 	blue       = "#1F6FEB"
 	purple     = "#411D37"
-	blueSelect = "#58B6C6"
+	blueSelect = "#8D908B"
 	orange     = "#E7220D"
 	grey       = "#8D908B"
 	yellow     = "#FF8C00"
@@ -99,4 +99,7 @@ var (
 				Foreground(lipgloss.Color(orange))
 	styleSettingValue = lipgloss.NewStyle().
 				Foreground(lipgloss.Color(yellow))
+
+	Stylehelper = lipgloss.NewStyle().Foreground(lipgloss.Color(grey)).MarginLeft(2)
+	helper      = Stylehelper.Render("<Esc> Exit | <Tab> move | <C-k> up value | <C-j> down value | <C-n> New Chat ")
 )

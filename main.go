@@ -14,6 +14,8 @@ import (
 
 func main() {
 	var chatGpt ChatGpt
+	var sessions Sessions
+	sessions.init()
 	chatGpt.Init()
 	// Load some text for our viewport
 	ta := textarea.New()
@@ -28,6 +30,7 @@ func main() {
 	ta.KeyMap.InsertNewline.SetEnabled(false)
 	p := tea.NewProgram(
 		model{
+			sessions:        sessions.init(),
 			chatGpt:         &chatGpt,
 			content:         "",
 			textarea:        ta,
@@ -36,7 +39,7 @@ func main() {
 			session:         false,
 			setting:         false,
 			selectorSetting: 1,
-			selectorSession: 0,
+			selectorSession: 1,
 			typing:          true,
 		},
 		tea.WithAltScreen(),       // use the full size of the terminal in its "alternate screen buffer"

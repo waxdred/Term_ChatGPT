@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strings"
+	"time"
 
 	"github.com/atotto/clipboard"
 	"github.com/charmbracelet/bubbles/textarea"
@@ -45,6 +47,8 @@ func (chat *ChatGpt) Init() {
 }
 
 type model struct {
+	sessions        Sessions
+	curr_session    Session
 	chatGpt         *ChatGpt
 	apikey          string
 	content         string
@@ -84,7 +88,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 		switch msg.String() {
 		case "ctrl+y":
-			clipboard.WriteAll(m.last_answer)
+			if m.last_answer != "" {
+				clipboard.WriteAll(m.last_answer)
+			}
 		case "ctrl+k":
 			if m.setting {
 				if m.selectorSetting == 1 && m.chatGpt.FrequencyPenalty < 2.0 {
@@ -132,8 +138,46 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					m.last_answer = chatGpt
 					m.textarea.Reset()
 					m.viewport.GotoBottom()
+					if m.curr_session.Title == "" {
+						t := time.Now()
+						timestamp := t.Format("2006-01-02 15:04:05")
+						name := strings.Replace(timestamp, " ", "", -1)
+						m.curr_session.Id = int64(len(m.sessions) + 1)
+						m.curr_session.Title = name
+						m.curr_session.Content = m.content
+						m.curr_session.Created_at = timestamp
+						m.curr_session.Setting = setting{
+							Temperature:      m.chatGpt.Temperature,
+							TopP:             m.chatGpt.TopP,
+							FrequencyPenalty: m.chatGpt.FrequencyPenalty,
+							PresencePenalty:  m.chatGpt.PresencePenalty,
+							MaxTokens:        m.chatGpt.MaxTokens,
+						}
+						m.sessions = append(m.sessions, m.curr_session)
+					} else {
+						m.curr_session.Content = m.content
+						m.curr_session.Setting = setting{
+							Temperature:      m.chatGpt.Temperature,
+							TopP:             m.chatGpt.TopP,
+							FrequencyPenalty: m.chatGpt.FrequencyPenalty,
+							PresencePenalty:  m.chatGpt.PresencePenalty,
+							MaxTokens:        m.chatGpt.MaxTokens,
+						}
+					}
+					m.curr_session.save()
 				}
 				m.typing = true
+			}
+			if m.session {
+				m.curr_session = m.sessions[m.selectorSession-1]
+				m.content = m.curr_session.Content
+				m.viewport.SetContent(m.content)
+				m.viewport.GotoBottom()
+				m.chatGpt.MaxTokens = m.curr_session.Setting.MaxTokens
+				m.chatGpt.PresencePenalty = m.curr_session.Setting.PresencePenalty
+				m.chatGpt.FrequencyPenalty = m.curr_session.Setting.FrequencyPenalty
+				m.chatGpt.TopP = m.curr_session.Setting.TopP
+				m.chatGpt.Temperature = m.curr_session.Setting.Temperature
 			}
 		case tea.KeyTab:
 			m.typing = false
@@ -154,13 +198,18 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				if m.selectorSetting <= 0 {
 					m.selectorSetting = 5
 				}
+			} else if m.session && m.selectorSession > 1 {
+				m.selectorSession--
 			}
 		case tea.KeyDown:
 			if m.setting {
 				m.selectorSetting++
-				if m.selectorSetting >= 6 {
-					m.selectorSetting = 1
-				}
+			} else if m.session && m.selectorSession < int64(m.sessions.Len()) {
+				m.selectorSession++
+			}
+		case tea.KeyCtrlD:
+			if m.session {
+				m.sessions = m.sessions.deleteFile(int(m.selectorSession))
 			}
 		}
 	case tea.WindowSizeMsg:
@@ -226,8 +275,9 @@ func (m model) View() string {
 		lipgloss.Top,
 		Setting,
 		TopBorderText(WeightSet, " Session ", false, m.session),
-		session.Render(""),
+		session.Render(m.sessions.getList(m.selectorSession)),
 	)
 	ret := lipgloss.JoinHorizontal(lipgloss.Top, ChatGptPrompt, History)
+	ret = lipgloss.JoinVertical(lipgloss.Top, ret, helper)
 	return ret
 }
