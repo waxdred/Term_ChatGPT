@@ -36,6 +36,8 @@ The main benefits of this plugin include:
 
 - Packer: You need to use the package manager for installing the plugin, such as vim-plug, dein.vim or Vundle.vim
 
+![](https://i.imgur.com/56hSp8U.gif)
+
 ## Installation
 
 - Set environment variable called `$OPENAI_API_KEY` which you can [obtain here](https://beta.openai.com/account/api-keys).
