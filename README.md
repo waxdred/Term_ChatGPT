@@ -2,7 +2,7 @@
 ![GoDoc](https://godoc.org/github.com/golang/gddo?status.svg)
 # Neovim_ChatGPT
 
-![Preview](https://imgur.com/A6lLV8E)
+![](https://i.imgur.com/A6lLV8E.png)
 
 `Plugin working but still in Progress`
 
@@ -25,6 +25,13 @@ require github.com/voldikss/vim-floaterm
 use { "github.com/waxdred/Term_ChatGPT" }
 vim-floaterm is for run chatGpt on your terminal
 use { "github.com/voldikss/vim-floaterm" }
+```
+
+- Using on your terminal
+```
+git clone https://github.com/waxdred/Term_ChatGPT.git 
+cd Term_ChatGPT/bin
+./chatGPT
 ```
 
 ## Configuration
