@@ -1,6 +1,3 @@
-function say_hello()
-  local api = vim.api
-  local cmd = api.nvim_command
-  cmd("echom 'Hello, World!'")
-end
-
+vim.api.nvim_create_user_command("ChatGPT", function()
+  require("chatgpt").openChat()
+end, {})
