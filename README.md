@@ -4,7 +4,7 @@
 
 `ChatGPT` is a Neovim plugin or app for your terminal that allows you to interact with OpenAI's GPT-3 language model.
 With `ChatGPT`, you can ask questions and get answers from GPT-3 in real-time.
-Save your `Session` automatic for can use again 
+and save your sessions for future use
 
 `Plugin create in Goland using charmbracelet/bubbles`
 
