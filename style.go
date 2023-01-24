@@ -23,11 +23,15 @@ var (
 
 var (
 	blue       = "#1F6FEB"
-	purple     = "#411D37"
+	purple     = "#6D00E8"
 	blueSelect = "#8D908B"
 	orange     = "#E7220D"
 	grey       = "#8D908B"
 	yellow     = "#FF8C00"
+	pink       = "#FF4D86"
+	darkGrey   = "#343433"
+	greyHelper = "#515150"
+
 	titleStyle = func() lipgloss.Style {
 		b := lipgloss.RoundedBorder()
 		b.Right = "├"
@@ -100,6 +104,17 @@ var (
 	styleSettingValue = lipgloss.NewStyle().
 				Foreground(lipgloss.Color(yellow))
 
-	Stylehelper = lipgloss.NewStyle().Foreground(lipgloss.Color(grey)).MarginLeft(2)
-	helper      = Stylehelper.Render("<Esc> Exit | <Tab> move | <C-k> up value | <C-j> down value | <C-n> New Chat ")
+	StylehelperTitle = lipgloss.NewStyle().Background(lipgloss.Color(pink)).
+				MarginLeft(2).
+				Height(1).Width(8).
+				Render(" HELPER ")
+	StylehelperValue = lipgloss.NewStyle().Background(lipgloss.Color(darkGrey)).
+				Height(1).Width(WeightChat - 8)
+	StylehelperLoader = lipgloss.NewStyle().Background(lipgloss.Color(purple)).
+				Height(1).Width(WeightSet + 4)
+	colorHelper   = lipgloss.NewStyle().Foreground(lipgloss.Color(greyHelper))
+	Stylehelper   = lipgloss.NewStyle().Foreground(lipgloss.Color(grey)).MarginLeft(2)
+	helperInput   = colorHelper.Render(" <Esc> Exit <Tab> change view <S-Enter>new line")
+	helperSetting = colorHelper.Render(" ⮃ up/down <C-k> or <C-j> change value")
+	helperSession = colorHelper.Render(" ⮃ up/down <Enter> Select")
 )

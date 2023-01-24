@@ -278,6 +278,23 @@ func (m model) View() string {
 		session.Render(m.sessions.getList(m.selectorSession)),
 	)
 	ret := lipgloss.JoinHorizontal(lipgloss.Top, ChatGptPrompt, History)
-	ret = lipgloss.JoinVertical(lipgloss.Top, ret, helper)
+	if m.session {
+		ret = lipgloss.JoinVertical(
+			lipgloss.Top,
+			ret,
+			StylehelperTitle+StylehelperValue.Render(helperSession)+StylehelperLoader.Render(""))
+	} else if m.prompt {
+		ret = lipgloss.JoinVertical(lipgloss.Top,
+			ret,
+			StylehelperTitle+StylehelperValue.Render(helperInput)+StylehelperLoader.Render(""))
+	} else if m.setting {
+		ret = lipgloss.JoinVertical(lipgloss.Top,
+			ret,
+			StylehelperTitle+StylehelperValue.Render(helperSetting)+StylehelperLoader.Render(""))
+	} else {
+		ret = lipgloss.JoinVertical(lipgloss.Top,
+			ret,
+			StylehelperTitle+StylehelperValue.Render("")+StylehelperLoader.Render(""))
+	}
 	return ret
 }
