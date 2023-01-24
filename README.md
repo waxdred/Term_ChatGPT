@@ -2,6 +2,8 @@
 ![GoDoc](https://godoc.org/github.com/golang/gddo?status.svg)
 # Neovim_ChatGPT
 
+![Preview](https://imgur.com/A6lLV8E)
+
 `Plugin working but still in Progress`
 
 `ChatGPT` is a Neovim plugin or app for your terminal that allows you to interact with OpenAI's GPT-3 language model.
