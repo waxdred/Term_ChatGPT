@@ -68,7 +68,7 @@ Plugin exposes following commands on Neovim:
 - frequency: `-2 | 2`
 - presence: `-2 | 2`
 - maxToken: `0 | 4000`
-- for more informations about it ![openAI](https://beta.openai.com/docs/guides/completion/prompt-design)
+- for more informations about it [openAI](https://beta.openai.com/docs/guides/completion/prompt-design)
 
 Available keybindings are:
 - `<Esc>` to close chat window.
