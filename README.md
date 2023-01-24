@@ -71,7 +71,7 @@ Plugin exposes following commands on Neovim:
 - maxToken: `0 | 4000`
 - for more informations about it [openAI](https://beta.openai.com/docs/guides/completion/prompt-design)
 
-Available keybindings are:
+#### Available keybindings are:
 - `<Esc>` to close chat window.
 - `scroll mouse` scroll up chat window.
 - `scroll mouse` scroll down chat window.
