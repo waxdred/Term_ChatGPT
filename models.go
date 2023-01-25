@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/atotto/clipboard"
+	"github.com/charmbracelet/bubbles/spinner"
 	"github.com/charmbracelet/bubbles/textarea"
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
@@ -17,6 +19,9 @@ import (
 )
 
 type ChatGpt struct {
+	sync.Mutex
+	routine          bool
+	rep              string
 	api              string
 	history          []string
 	ctx              context.Context
@@ -39,14 +44,15 @@ func (chat *ChatGpt) Init() {
 	chat.Model = "text-davinci-003"
 	chat.c = gogpt.NewClient(chat.api)
 	chat.ctx = context.Background()
-	chat.Temperature = 0.9
-	chat.TopP = 1
+	chat.Temperature = 0
+	chat.TopP = 0.5
 	chat.FrequencyPenalty = 0
-	chat.PresencePenalty = 0.6
-	chat.MaxTokens = 400
+	chat.PresencePenalty = 0
+	chat.MaxTokens = 100
 }
 
 type model struct {
+	spinner         spinner.Model
 	sessions        Sessions
 	curr_session    Session
 	chatGpt         *ChatGpt
@@ -68,17 +74,57 @@ type model struct {
 
 func (m model) Init() tea.Cmd {
 	m.typing = true
-	return textarea.Blink
+	return tea.Batch(textarea.Blink, spinner.Tick)
 }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var (
 		tiCmd tea.Cmd
 		vpCmd tea.Cmd
+		spCmd tea.Cmd
 	)
 	if m.typing {
 		m.textarea, tiCmd = m.textarea.Update(msg)
 	}
+	if m.chatGpt.rep != "" {
+		render := fmt.Sprintf("%s\n%s", TitleGpt.Render("Chat_GPT:"), m.chatGpt.rep)
+		m.content = m.content + styleGpt.Render(render)
+		m.viewport.SetContent(m.content)
+		m.last_answer = m.chatGpt.rep
+		m.viewport.GotoBottom()
+		if m.curr_session.Title == "" {
+			t := time.Now()
+			timestamp := t.Format("2006-01-02 15:04:05")
+			name := strings.Replace(timestamp, " ", "", -1)
+			m.curr_session.Id = int64(len(m.sessions) + 1)
+			m.curr_session.Title = name
+			m.curr_session.Content = m.content
+			m.curr_session.Created_at = timestamp
+			m.curr_session.Setting = setting{
+				Temperature:      m.chatGpt.Temperature,
+				TopP:             m.chatGpt.TopP,
+				FrequencyPenalty: m.chatGpt.FrequencyPenalty,
+				PresencePenalty:  m.chatGpt.PresencePenalty,
+				MaxTokens:        m.chatGpt.MaxTokens,
+			}
+			m.sessions = append(m.sessions, m.curr_session)
+		} else {
+			m.curr_session.Content = m.content
+			m.curr_session.Setting = setting{
+				Temperature:      m.chatGpt.Temperature,
+				TopP:             m.chatGpt.TopP,
+				FrequencyPenalty: m.chatGpt.FrequencyPenalty,
+				PresencePenalty:  m.chatGpt.PresencePenalty,
+				MaxTokens:        m.chatGpt.MaxTokens,
+			}
+		}
+		m.typing = true
+		m.textarea.Placeholder = "Send a message..."
+		m.textarea.Focus()
+		m.curr_session.save()
+		m.chatGpt.rep = ""
+	}
+	m.spinner, spCmd = m.spinner.Update(msg)
 	m.viewport, vpCmd = m.viewport.Update(msg)
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
@@ -122,51 +168,19 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 		switch msg.Type {
 		case tea.KeyEnter:
-			m.typing = false
-			if m.prompt && m.textarea.Value() != "" {
+			if m.prompt && m.typing && m.textarea.Value() != "" {
+				m.typing = false
+				m.chatGpt.routine = false
 				render := fmt.Sprintf("%s\n%s", TitleUser.Render(m.chatGpt.user), m.textarea.Value())
 				m.content = m.content + "\n" + styleUser.Render(render) + "\n"
-				chatGpt, err := requetOpenAI(m.chatGpt, m.textarea.Value())
-				if err != nil {
-					m.viewport.SetContent(err.Error())
-					return m, nil
+				go requetOpenAI(m.chatGpt, m.textarea.Value())
+				if m.chatGpt.routine {
+					return m, tea.Batch(tiCmd, vpCmd, spCmd)
 				}
-				if chatGpt != "" {
-					render := fmt.Sprintf("%s\n%s", TitleGpt.Render("Chat_GPT:"), chatGpt)
-					m.content = m.content + styleGpt.Render(render)
-					m.viewport.SetContent(m.content)
-					m.last_answer = chatGpt
-					m.textarea.Reset()
-					m.viewport.GotoBottom()
-					if m.curr_session.Title == "" {
-						t := time.Now()
-						timestamp := t.Format("2006-01-02 15:04:05")
-						name := strings.Replace(timestamp, " ", "", -1)
-						m.curr_session.Id = int64(len(m.sessions) + 1)
-						m.curr_session.Title = name
-						m.curr_session.Content = m.content
-						m.curr_session.Created_at = timestamp
-						m.curr_session.Setting = setting{
-							Temperature:      m.chatGpt.Temperature,
-							TopP:             m.chatGpt.TopP,
-							FrequencyPenalty: m.chatGpt.FrequencyPenalty,
-							PresencePenalty:  m.chatGpt.PresencePenalty,
-							MaxTokens:        m.chatGpt.MaxTokens,
-						}
-						m.sessions = append(m.sessions, m.curr_session)
-					} else {
-						m.curr_session.Content = m.content
-						m.curr_session.Setting = setting{
-							Temperature:      m.chatGpt.Temperature,
-							TopP:             m.chatGpt.TopP,
-							FrequencyPenalty: m.chatGpt.FrequencyPenalty,
-							PresencePenalty:  m.chatGpt.PresencePenalty,
-							MaxTokens:        m.chatGpt.MaxTokens,
-						}
-					}
-					m.curr_session.save()
-				}
-				m.typing = true
+				m.textarea.Reset()
+				m.textarea.Placeholder = "Loading..."
+				m.viewport.SetContent(m.content)
+				m.viewport.GotoBottom()
 			}
 			if m.session {
 				m.curr_session = m.sessions[m.selectorSession-1]
@@ -229,7 +243,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	// Handle keyboard and mouse events in the viewport
 	m.viewport, vpCmd = m.viewport.Update(msg)
-	return m, tea.Batch(tiCmd, vpCmd)
+	return m, tea.Batch(tiCmd, vpCmd, spCmd)
 }
 
 func (m model) View() string {
@@ -264,7 +278,7 @@ func (m model) View() string {
 		lipgloss.Top,
 		ChatGpt,
 		TopBorderText(WeightChat, " Prompt ", false, m.prompt),
-		prompt.Render(m.textarea.View()),
+		prompt.Render(" "+styleSpinner.Render(m.spinner.View())+m.textarea.View()),
 	)
 	Setting := lipgloss.JoinVertical(
 		lipgloss.Top,

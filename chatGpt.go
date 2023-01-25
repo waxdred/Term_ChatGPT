@@ -6,10 +6,12 @@ import (
 	gogpt "github.com/sashabaranov/go-gpt3"
 )
 
-func requetOpenAI(chatGpt *ChatGpt, input string) (string, error) {
-	var ret string
+func requetOpenAI(chatGpt *ChatGpt, input string) {
+	chatGpt.Lock()
+	chatGpt.routine = true
 	chatGpt.history = append(chatGpt.history, input)
 	inp := strings.Join(chatGpt.history, " ")
+	chatGpt.Unlock()
 	req := gogpt.CompletionRequest{
 		Model:            chatGpt.Model,
 		MaxTokens:        int(chatGpt.MaxTokens),
@@ -21,11 +23,14 @@ func requetOpenAI(chatGpt *ChatGpt, input string) (string, error) {
 	}
 	resp, err := chatGpt.c.CreateCompletion(chatGpt.ctx, req)
 	if err != nil {
-		return ret, err
+		chatGpt.Lock()
+		chatGpt.rep = err.Error()
+		chatGpt.Unlock()
+		return
 	}
 	if len(resp.Choices) > 0 {
-		ret = strings.TrimPrefix(resp.Choices[0].Text, "\n")
-		chatGpt.history = append(chatGpt.history, ret)
+		chatGpt.Lock()
+		chatGpt.rep = strings.TrimPrefix(resp.Choices[0].Text, "\n")
+		chatGpt.Unlock()
 	}
-	return ret, nil
 }

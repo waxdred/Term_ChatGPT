@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/charmbracelet/bubbles/spinner"
 	"github.com/charmbracelet/bubbles/textarea"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -17,10 +18,12 @@ func main() {
 	var sessions Sessions
 	sessions.init()
 	chatGpt.Init()
+	s := spinner.New()
+	s.Spinner = spinner.Dot
 	// Load some text for our viewport
 	ta := textarea.New()
 	ta.Placeholder = "Send a message..."
-	ta.Prompt = "> "
+	ta.Prompt = " "
 	ta.Focus()
 	ta.CharLimit = 1000
 	ta.SetWidth(WeightChat)
@@ -30,6 +33,7 @@ func main() {
 	ta.KeyMap.InsertNewline.SetEnabled(false)
 	p := tea.NewProgram(
 		model{
+			spinner:         s,
 			sessions:        sessions.init(),
 			chatGpt:         &chatGpt,
 			content:         "",

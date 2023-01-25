@@ -41,6 +41,8 @@ var (
 	styleborderTopSelect = lipgloss.NewStyle().Foreground(lipgloss.Color(blueSelect))
 	styleborderTitle     = lipgloss.NewStyle().Foreground(lipgloss.Color(purple))
 
+	styleSpinner = lipgloss.NewStyle().Foreground(lipgloss.Color(purple))
+
 	infoStyle = func() lipgloss.Style {
 		b := lipgloss.RoundedBorder()
 		b.Left = "┤"
