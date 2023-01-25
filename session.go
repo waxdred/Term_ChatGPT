@@ -80,7 +80,7 @@ func (s Sessions) getList(idx int64) string {
 	var ret string
 	var count int64
 	for i, se := range s {
-		if i+1 >= int(idx) && count < int64(heightSession) {
+		if i+1 >= int(idx) && count < int64(heightSession)-1 {
 			tmp := se.Created_at
 			tmp = strings.Replace(tmp, " ", "", -1)
 			if i+1 == int(idx) {

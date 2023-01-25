@@ -143,6 +143,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.textarea.Focus()
 		m.curr_session.save()
 		m.chatGpt.rep = ""
+		m.chatGpt.routine = false
 	}
 	m.spinner, spCmd = m.spinner.Update(msg)
 	m.viewport, vpCmd = m.viewport.Update(msg)
