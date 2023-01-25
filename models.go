@@ -104,11 +104,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		vpCmd tea.Cmd
 		spCmd tea.Cmd
 	)
-	if m.typing {
-		m.textarea, tiCmd = m.textarea.Update(msg)
-	}
 	if m.chatGpt.rep != "" {
 		m.chatGpt.Lock()
+		defer m.chatGpt.Unlock()
 		render := fmt.Sprintf("%s\n%s", TitleGpt.Render("Chat_GPT:"), m.chatGpt.rep)
 		m.chatGpt.routine = false
 		m.content = m.content + styleGpt.Render(render)
@@ -145,15 +143,14 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.textarea.Placeholder = "Send a message..."
 		m.textarea.Focus()
 		m.chatGpt.rep = ""
-		m.chatGpt.Unlock()
 		m.curr_session.save()
 	}
+	m.textarea, tiCmd = m.textarea.Update(msg)
 	m.spinner, spCmd = m.spinner.Update(msg)
 	m.viewport, vpCmd = m.viewport.Update(msg)
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		if k := msg.String(); k == "esc" || k == "ctrl+c" {
-			fmt.Println(m.textarea.Value())
 			return m, tea.Quit
 		}
 		switch msg.String() {
@@ -194,12 +191,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case tea.KeyEnter:
 			if m.prompt && m.typing && !m.chatGpt.routine && m.textarea.Value() != "" {
 				m.typing = false
-				m.chatGpt.routine = false
-				render := fmt.Sprintf("%s\n%s", TitleUser.Render(m.chatGpt.user), m.textarea.Value())
+				render := wrap.String(m.textarea.Value(), WeightChat/3)
+				render = fmt.Sprintf("%s\n%s", TitleUser.Render(m.chatGpt.user), render)
 				m.content = m.content + "\n" + styleUser.Render(render) + "\n"
 				go requetOpenAI(m.chatGpt, m.textarea.Value())
 				if m.chatGpt.routine {
-					return m, tea.Batch(tiCmd, vpCmd, spCmd)
+					tea.ExitAltScreen()
+					return m, nil
 				}
 				m.textarea.Reset()
 				m.textarea.Placeholder = "Loading..."
@@ -265,7 +263,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 
 	// Handle keyboard and mouse events in the viewport
-	m.viewport.GotoBottom()
 	m.viewport, vpCmd = m.viewport.Update(msg)
 	return m, tea.Batch(tiCmd, vpCmd, spCmd)
 }

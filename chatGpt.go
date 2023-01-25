@@ -9,6 +9,7 @@ import (
 func requetOpenAI(chatGpt *ChatGpt, input string) {
 	chatGpt.Lock()
 	chatGpt.routine = true
+	input = strings.Replace(input, "'", " ", -1)
 	chatGpt.history = append(chatGpt.history, input)
 	inp := strings.Join(chatGpt.history, " ")
 	chatGpt.Unlock()
