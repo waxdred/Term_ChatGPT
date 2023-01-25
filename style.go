@@ -17,7 +17,7 @@ var (
 
 	heightPrompt  = 1
 	heightSetting = 6
-	heightSession = Wheight - heightSetting - 7
+	heightSession = Wheight - heightSetting - 6
 	heightChat    = Wheight - heightPrompt - 7
 )
 

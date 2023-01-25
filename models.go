@@ -44,11 +44,31 @@ func (chat *ChatGpt) Init() {
 	chat.Model = "text-davinci-003"
 	chat.c = gogpt.NewClient(chat.api)
 	chat.ctx = context.Background()
-	chat.Temperature = 0
-	chat.TopP = 0.5
-	chat.FrequencyPenalty = 0
-	chat.PresencePenalty = 0
-	chat.MaxTokens = 100
+	if *temperature >= 0 && *temperature <= 2.0 {
+		chat.Temperature = *temperature
+	} else {
+		chat.Temperature = 0
+	}
+	if *top >= 0 && *top <= 2.0 {
+		chat.TopP = *top
+	} else {
+		chat.TopP = 0
+	}
+	if *frequency >= -2.0 && *frequency <= 2.0 {
+		chat.FrequencyPenalty = *frequency
+	} else {
+		chat.FrequencyPenalty = 0
+	}
+	if *presence >= -2.0 && *presence <= 2.0 {
+		chat.PresencePenalty = *presence
+	} else {
+		chat.PresencePenalty = 0
+	}
+	if *token >= 0 && *token <= 4000 {
+		chat.MaxTokens = *token
+	} else {
+		chat.MaxTokens = 100
+	}
 }
 
 type model struct {
@@ -229,12 +249,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.WindowSizeMsg:
 		if !m.ready {
 			m.viewport = viewport.New(WeightChat, Wheight-8)
-			m.viewport.YPosition = 4
 			m.viewport.HighPerformanceRendering = useHighPerformanceRenderer
 			text := wrap.String(m.content, WeightChat)
 			m.viewport.SetContent(text)
 			m.ready = true
-			m.viewport.YPosition = WeightChat + 1
+			m.viewport.GotoBottom()
 		} else {
 			m.viewport.Width = WeightChat
 			m.viewport.Height = Wheight - 8

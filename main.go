@@ -4,6 +4,7 @@ package main
 // component library.
 
 import (
+	"flag"
 	"fmt"
 	"os"
 
@@ -13,7 +14,16 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
+var (
+	temperature = flag.Float64("temp", 0, "chatGpt temperature")
+	top         = flag.Float64("top", 0.5, "chatGpt topP")
+	frequency   = flag.Float64("freg", 0.5, "chatGpt frequency")
+	presence    = flag.Float64("pres", 0.5, "chatGpt presence")
+	token       = flag.Int64("token", 400, "chatGpt presence")
+)
+
 func main() {
+	flag.Parse()
 	var chatGpt ChatGpt
 	var sessions Sessions
 	sessions.init()

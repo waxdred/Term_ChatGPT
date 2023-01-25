@@ -30,7 +30,9 @@ func requetOpenAI(chatGpt *ChatGpt, input string) {
 	}
 	if len(resp.Choices) > 0 {
 		chatGpt.Lock()
-		chatGpt.rep = strings.TrimPrefix(resp.Choices[0].Text, "\n")
+		ret := strings.TrimPrefix(resp.Choices[0].Text, "\n")
+		chatGpt.history = append(chatGpt.history, ret)
+		chatGpt.rep = ret
 		chatGpt.Unlock()
 	}
 }
