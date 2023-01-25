@@ -47,7 +47,7 @@ require github.com/voldikss/vim-floaterm
 ```lua
 -- Packer
 use { "github.com/waxdred/Term_ChatGPT" }
-vim-floaterm is for run chatGpt on your terminal
+-- vim-floaterm is for run chatGpt on your terminal
 use { "github.com/voldikss/vim-floaterm" }
 ```
 
