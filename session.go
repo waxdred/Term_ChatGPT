@@ -78,15 +78,19 @@ func (s Sessions) deleteFile(idx int) Sessions {
 
 func (s Sessions) getList(idx int64) string {
 	var ret string
+	var count int64
 	for i, se := range s {
-		tmp := se.Created_at
-		tmp = strings.Replace(tmp, " ", "", -1)
-		if i+1 == int(idx) {
-			tmp = styleSettingSelectTitle.Render(">" + tmp)
-		} else {
-			tmp = styleSettingTitle.Render(tmp)
+		if i+1 >= int(idx) && count < int64(heightSession) {
+			tmp := se.Created_at
+			tmp = strings.Replace(tmp, " ", "", -1)
+			if i+1 == int(idx) {
+				tmp = styleSettingSelectTitle.Render(">" + tmp)
+			} else {
+				tmp = styleSettingTitle.Render(tmp)
+			}
+			ret = fmt.Sprintf("%s\n%s", ret, tmp)
+			count++
 		}
-		ret = fmt.Sprintf("%s\n%s", ret, tmp)
 	}
 	return ret
 }
