@@ -44,6 +44,7 @@ func (chat *ChatGpt) Init() {
 	chat.Model = "text-davinci-003"
 	chat.c = gogpt.NewClient(chat.api)
 	chat.ctx = context.Background()
+	chat.routine = false
 	if *temperature >= 0 && *temperature <= 2.0 {
 		chat.Temperature = *temperature
 	} else {
@@ -107,7 +108,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.textarea, tiCmd = m.textarea.Update(msg)
 	}
 	if m.chatGpt.rep != "" {
+		m.chatGpt.Lock()
 		render := fmt.Sprintf("%s\n%s", TitleGpt.Render("Chat_GPT:"), m.chatGpt.rep)
+		m.chatGpt.routine = false
 		m.content = m.content + styleGpt.Render(render)
 		m.viewport.SetContent(m.content)
 		m.last_answer = m.chatGpt.rep
@@ -141,9 +144,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.typing = true
 		m.textarea.Placeholder = "Send a message..."
 		m.textarea.Focus()
-		m.curr_session.save()
 		m.chatGpt.rep = ""
-		m.chatGpt.routine = false
+		m.chatGpt.Unlock()
+		m.curr_session.save()
 	}
 	m.spinner, spCmd = m.spinner.Update(msg)
 	m.viewport, vpCmd = m.viewport.Update(msg)
@@ -189,7 +192,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 		switch msg.Type {
 		case tea.KeyEnter:
-			if m.prompt && m.typing && m.textarea.Value() != "" {
+			if m.prompt && m.typing && !m.chatGpt.routine && m.textarea.Value() != "" {
 				m.typing = false
 				m.chatGpt.routine = false
 				render := fmt.Sprintf("%s\n%s", TitleUser.Render(m.chatGpt.user), m.textarea.Value())
@@ -262,6 +265,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 
 	// Handle keyboard and mouse events in the viewport
+	m.viewport.GotoBottom()
 	m.viewport, vpCmd = m.viewport.Update(msg)
 	return m, tea.Batch(tiCmd, vpCmd, spCmd)
 }
