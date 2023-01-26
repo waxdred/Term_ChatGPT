@@ -80,20 +80,20 @@ Plugin exposes following commands on Neovim:
 <br>
   <lu>
     <li></li>
+    <li>`<Esc>` to close chat window.</li>
+    <li>`scroll mouse` scroll up chat window.</li>
+    <li>`scroll mouse` scroll down chat window.</li>
+    <li>`<C-y>` to copy/yank last answer.</li>
+    <li>`<C-n>` Start new session.</li>
+    <li>`<Tab>` Cycle over windows.</li>
+    <li>Setting Window</li>
+    <li>`< + >` [Change value selection] up the value</li>
+    <li>`< - >` [Change value selection] down the value</li>
+    <li>`<C-k>` [Navigate] with arrow</li>
+    <li>`<C-j>` [Navigate] with arrow</li>
+    <li>Session Window</li>
+    <li>`<Enter>`Select Session</li>
+    <li>`C-d` deleted Session</li>
+    <li>`C-r`rename Session</li>
   </lu>
-- `<Esc>` to close chat window.
-- `scroll mouse` scroll up chat window.
-- `scroll mouse` scroll down chat window.
-- `<C-y>` to copy/yank last answer.
-- `<C-n>` Start new session.
-- `<Tab>` Cycle over windows.
-- Setting Window
-- `< + >` [Change value selection] up the value
-- `< - >` [Change value selection] down the value
-- `<C-k>` [Navigate] with arrow
-- `<C-j>` [Navigate] with arrow
-- Session Window
-- `<Enter>`Select Session
-- `C-d` deleted Session
-- `C-r`rename Session
 </details>
