@@ -70,11 +70,11 @@ Plugin exposes following commands on Neovim:
 ```
   flag list:
     flag      | default
-	  -temp     | 0
-	  -top      | 0.5
-	  -freg     | 0.5
-	  -pres     | 0.5
-	  -token    | 100
+    -temp     | 0
+    -top      | 0.5
+    -freg     | 0.5
+    -pres     | 0.5
+    -token    | 100
     
   exemple:
     ./chatGPT -temp=0 -top=1 -freg=0.5 -pres=0.6 -token=30
