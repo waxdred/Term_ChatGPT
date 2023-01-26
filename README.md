@@ -20,7 +20,12 @@ The main benefits of this plugin include:
 ## App chatGpt can be use on your terminal or on Neovim
 
 ## Running on Neovim
-![](https://i.imgur.com/A6lLV8E.png)
+
+- App can be running on the terminal or neovim </br> </br>
+![](https://imgur.com/KCCKaR6.png)
+
+- The setting can be change easily </br> </br>
+![](https://i.imgur.com/5TFJflJ.gif)
 
 ## Requirements
 - Neovim: The plugin is designed to work with Neovim, so you'll need to have Neovim installed on your machine. You should have at least version 0.5.0 of Neovim, but it's recommended to use the latest version for the best experience.
@@ -33,7 +38,7 @@ The main benefits of this plugin include:
 
 - Packer: You need to use the package manager for installing the plugin, such as vim-plug, dein.vim or Vundle.vim
 
-![](https://i.imgur.com/56hSp8U.gif)
+![](https://i.imgur.com/YIyqUFL.gif)
 
 ## Installation
 
@@ -70,20 +75,25 @@ Plugin exposes following commands on Neovim:
 - presence: `-2 | 2`
 - maxToken: `0 | 4000`
 - for more informations about it [openAI](https://beta.openai.com/docs/guides/completion/prompt-design)
-
-#### Available keybindings are:
+<details>
+<summary>Available keybindings</summary>
+<br>
+  <lu>
+    <li></li>
+  </lu>
 - `<Esc>` to close chat window.
 - `scroll mouse` scroll up chat window.
 - `scroll mouse` scroll down chat window.
 - `<C-y>` to copy/yank last answer.
-- `<C-n>` Start new session in Progress.
+- `<C-n>` Start new session.
 - `<Tab>` Cycle over windows.
 - Setting Window
-- `<C-k>` [Change value selection] up the value
-- `<C-j>` [Change value selection] down the value
-- `<up>` [Navigate] with arrow
-- `<down>` [Navigate] with arrow
+- `< + >` [Change value selection] up the value
+- `< - >` [Change value selection] down the value
+- `<C-k>` [Navigate] with arrow
+- `<C-j>` [Navigate] with arrow
 - Session Window
 - `<Enter>`Select Session
 - `C-d` deleted Session
-- `C-r`rename Session 'in Progress'
+- `C-r`rename Session
+</details>
