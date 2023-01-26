@@ -24,7 +24,7 @@ The main benefits of this plugin include:
 - App can be running on the terminal or neovim
 ![](https://imgur.com/KCCKaR6.png)
 
-- The setting can be change easily 
+- The setting can be change easily </br>
 ![](https://i.imgur.com/5TFJflJ.gif)
 
 ## Requirements
