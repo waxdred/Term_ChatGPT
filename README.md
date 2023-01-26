@@ -21,10 +21,10 @@ The main benefits of this plugin include:
 
 ## Running on Neovim
 
-- App can be running on the terminal or neovim
+- App can be running on the terminal or neovim </br>
 ![](https://imgur.com/KCCKaR6.png)
 
-- The setting can be change easily </br>
+- The setting can be change easily </br> </br>
 ![](https://i.imgur.com/5TFJflJ.gif)
 
 ## Requirements
