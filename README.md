@@ -38,7 +38,7 @@ The main benefits of this plugin include:
 
 - Packer: You need to use the package manager for installing the plugin, such as vim-plug, dein.vim or Vundle.vim
 
-![](https://i.imgur.com/56hSp8U.gif)
+![](https://i.imgur.com/YIyqUFL.gif)
 
 ## Installation
 
