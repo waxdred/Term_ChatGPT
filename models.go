@@ -280,9 +280,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.viewport.SetContent(text)
 			m.ready = true
 			m.viewport.GotoBottom()
-		} else {
-			m.viewport.Width = WeightChat
-			m.viewport.Height = Wheight - 8
 		}
 	}
 

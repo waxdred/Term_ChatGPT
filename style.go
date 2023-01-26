@@ -112,7 +112,7 @@ var (
 				Height(1).Width(WeightSet)
 	colorHelper   = lipgloss.NewStyle().Foreground(lipgloss.Color(greyHelper))
 	Stylehelper   = lipgloss.NewStyle().Foreground(lipgloss.Color(grey)).MarginLeft(2)
-	helperInput   = colorHelper.Render(" <C-y>: copy <Tab>: Cycle over windows")
+    helperInput   = colorHelper.Render(" <C-n>: new Session <C-y>: copy <Tab>: Cycle over windows")
 	helperSetting = colorHelper.Render(" <C-k>: up <C-j>: down (+/-)")
 	helperSession = colorHelper.Render(" <C-k>: up <C-j>: down <C-r>: rename <C-d>: delete")
 )
