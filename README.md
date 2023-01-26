@@ -24,9 +24,6 @@ The main benefits of this plugin include:
 - App can be running on the terminal or neovim </br> </br>
 ![](https://imgur.com/KCCKaR6.png)
 
-- The setting can be change easily </br> </br>
-![](https://i.imgur.com/5TFJflJ.gif)
-
 ## Requirements
 - Neovim: The plugin is designed to work with Neovim, so you'll need to have Neovim installed on your machine. You should have at least version 0.5.0 of Neovim, but it's recommended to use the latest version for the best experience.
 
@@ -69,6 +66,8 @@ Plugin exposes following commands on Neovim:
 - `:ChatGPT` command which opens interactive window.
 ### Setting:
 #### Setting viewPort
+- The setting can be change easily </br> </br>
+![](https://i.imgur.com/5TFJflJ.gif) </br></br>
 - temperature:`0 | 1`
 - topP: `0 | 1`
 - frequency: `-2 | 2`
@@ -79,7 +78,6 @@ Plugin exposes following commands on Neovim:
 <summary>Available keybindings</summary>
 <br>
   <lu>
-    <li></li>
     <li>< Esc > to close chat window.</li>
     <li>scroll mouse scroll up chat window.</li>
     <li>scroll mouse scroll down chat window.</li>
