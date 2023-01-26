@@ -19,7 +19,7 @@ var (
 	top         = flag.Float64("top", 0.5, "chatGpt topP")
 	frequency   = flag.Float64("freg", 0.5, "chatGpt frequency")
 	presence    = flag.Float64("pres", 0.5, "chatGpt presence")
-	token       = flag.Int64("token", 400, "chatGpt presence")
+	token       = flag.Int64("token", 100, "chatGpt presence")
 )
 
 func main() {
@@ -32,17 +32,26 @@ func main() {
 	s.Spinner = spinner.Dot
 	// Load some text for our viewport
 	ta := textarea.New()
+	ti := textarea.New()
 	ta.Placeholder = "Send a message..."
+	ti.Placeholder = "Rename"
 	ta.Prompt = " "
+	ti.Prompt = "> "
 	ta.Focus()
 	ta.CharLimit = 1000
+	ti.CharLimit = WeightSet - 4
 	ta.SetWidth(WeightChat)
 	ta.SetHeight(heightPrompt)
+	ti.SetWidth(WeightSet + 4)
+	ti.SetHeight(heightPrompt)
 	ta.FocusedStyle.CursorLine = lipgloss.NewStyle()
 	ta.ShowLineNumbers = false
+	ti.ShowLineNumbers = false
 	ta.KeyMap.InsertNewline.SetEnabled(false)
 	p := tea.NewProgram(
 		model{
+			textinput:       ti,
+			rename:          false,
 			spinner:         s,
 			sessions:        sessions.init(),
 			chatGpt:         &chatGpt,

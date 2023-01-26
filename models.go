@@ -73,6 +73,8 @@ func (chat *ChatGpt) Init() {
 }
 
 type model struct {
+	textinput       textarea.Model
+	rename          bool
 	spinner         spinner.Model
 	sessions        Sessions
 	curr_session    Session
@@ -103,6 +105,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		tiCmd tea.Cmd
 		vpCmd tea.Cmd
 		spCmd tea.Cmd
+		reCmd tea.Cmd
 	)
 	if m.chatGpt.rep != "" {
 		m.chatGpt.Lock()
@@ -119,6 +122,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			name := strings.Replace(timestamp, " ", "", -1)
 			m.curr_session.Id = int64(len(m.sessions) + 1)
 			m.curr_session.Title = name
+			m.curr_session.Msg = m.curr_session.Msg + "chatGpt: " + m.chatGpt.rep
 			m.curr_session.Content = m.content
 			m.curr_session.Created_at = timestamp
 			m.curr_session.Setting = setting{
@@ -130,7 +134,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 			m.sessions = append(m.sessions, m.curr_session)
 		} else {
-			m.curr_session.Content = m.content
+			m.curr_session.Content = m.curr_session.Content + m.content
+			m.curr_session.Msg = m.curr_session.Msg + " " + m.chatGpt.rep
 			m.curr_session.Setting = setting{
 				Temperature:      m.chatGpt.Temperature,
 				TopP:             m.chatGpt.TopP,
@@ -145,9 +150,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.chatGpt.rep = ""
 		m.curr_session.save()
 	}
-	m.textarea, tiCmd = m.textarea.Update(msg)
-	m.spinner, spCmd = m.spinner.Update(msg)
-	m.viewport, vpCmd = m.viewport.Update(msg)
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		if k := msg.String(); k == "esc" || k == "ctrl+c" {
@@ -158,7 +160,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if m.last_answer != "" {
 				clipboard.WriteAll(m.last_answer)
 			}
-		case "ctrl+k":
+		case "+":
 			if m.setting {
 				if m.selectorSetting == 1 && m.chatGpt.FrequencyPenalty < 2.0 {
 					m.chatGpt.FrequencyPenalty = m.chatGpt.FrequencyPenalty + 0.1
@@ -172,7 +174,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					m.chatGpt.TopP = m.chatGpt.TopP + 0.1
 				}
 			}
-		case "ctrl+j":
+		case "-":
 			if m.setting {
 				if m.selectorSetting == 1 && m.chatGpt.FrequencyPenalty > -2.0 {
 					m.chatGpt.FrequencyPenalty = m.chatGpt.FrequencyPenalty - 0.1
@@ -189,12 +191,22 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 		switch msg.Type {
 		case tea.KeyEnter:
-			if m.prompt && m.typing && !m.chatGpt.routine && m.textarea.Value() != "" {
+			if m.rename && m.textinput.Value() != "" && m.session {
+				input := strings.Replace(m.textinput.Value(), " ", "_", -1)
+				err := m.sessions.rename(input, m.selectorSession)
+				if err != nil {
+					return m, nil
+				}
+				m.rename = false
+				m.textinput.Reset()
+				m.sessions = m.sessions.init()
+			} else if m.prompt && m.typing && !m.chatGpt.routine && m.textarea.Value() != "" {
 				m.typing = false
+				m.curr_session.Msg = m.curr_session.Msg + " " + m.textarea.Value()
 				render := wrap.String(m.textarea.Value(), WeightChat/3)
 				render = fmt.Sprintf("%s\n%s", TitleUser.Render(m.chatGpt.user), render)
 				m.content = m.content + "\n" + styleUser.Render(render) + "\n"
-				go requetOpenAI(m.chatGpt, m.textarea.Value())
+				go requetOpenAI(m.chatGpt, m.curr_session, m.textarea.Value())
 				if m.chatGpt.routine {
 					tea.ExitAltScreen()
 					return m, nil
@@ -216,7 +228,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.chatGpt.Temperature = m.curr_session.Setting.Temperature
 			}
 		case tea.KeyTab:
-			m.typing = false
+			m.rename = false
+			m.textinput.Reset()
 			if m.prompt {
 				m.prompt = false
 				m.setting = true
@@ -228,7 +241,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.prompt = true
 				m.typing = true
 			}
-		case tea.KeyUp:
+		case tea.KeyCtrlK:
 			if m.setting {
 				m.selectorSetting--
 				if m.selectorSetting <= 0 {
@@ -237,7 +250,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			} else if m.session && m.selectorSession > 1 {
 				m.selectorSession--
 			}
-		case tea.KeyDown:
+		case tea.KeyCtrlN:
+			if m.typing {
+				m.curr_session = Session{}
+				m.content = ""
+				m.viewport.SetContent("")
+			}
+		case tea.KeyCtrlJ:
 			if m.setting {
 				m.selectorSetting++
 			} else if m.session && m.selectorSession < int64(m.sessions.Len()) {
@@ -246,6 +265,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case tea.KeyCtrlD:
 			if m.session {
 				m.sessions = m.sessions.deleteFile(int(m.selectorSession))
+			}
+		case tea.KeyCtrlR:
+			if m.session {
+				m.rename = true
+				m.textinput.Focus()
 			}
 		}
 	case tea.WindowSizeMsg:
@@ -262,15 +286,22 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	}
 
-	// Handle keyboard and mouse events in the viewport
-	m.viewport, vpCmd = m.viewport.Update(msg)
-	return m, tea.Batch(tiCmd, vpCmd, spCmd)
+	if m.prompt {
+		m.textarea, tiCmd = m.textarea.Update(msg)
+		m.viewport, vpCmd = m.viewport.Update(msg)
+	}
+	if m.rename {
+		m.textinput, reCmd = m.textinput.Update(msg)
+	}
+	m.spinner, spCmd = m.spinner.Update(msg)
+	return m, tea.Batch(tiCmd, vpCmd, spCmd, reCmd)
 }
 
 func (m model) View() string {
 	var prompt lipgloss.Style
 	var session lipgloss.Style
 	var setting lipgloss.Style
+	var rename string
 	if m.prompt {
 		prompt = styleBorderPromptSelect
 	} else {
@@ -292,7 +323,7 @@ func (m model) View() string {
 	msg := fmt.Sprintf("%s", m.viewport.View())
 	ChatGpt := lipgloss.JoinVertical(
 		lipgloss.Top,
-		TopBorderText(WeightChat, " Chat GPT ", true, false),
+		TopBorderText(WeightChat, " Chat GPT: "+m.curr_session.Title, true, false),
 		styleBorder.Render(msg),
 	)
 	ChatGptPrompt := lipgloss.JoinVertical(
@@ -313,23 +344,28 @@ func (m model) View() string {
 		session.Render(m.sessions.getList(m.selectorSession)),
 	)
 	ret := lipgloss.JoinHorizontal(lipgloss.Top, ChatGptPrompt, History)
+	if m.rename && m.session {
+		rename = m.textinput.View()
+	} else {
+		rename = StyleUTF + StyleCreate
+	}
 	if m.session {
 		ret = lipgloss.JoinVertical(
 			lipgloss.Top,
 			ret,
-			StylehelperTitle+StylehelperValue.Render(helperSession)+StylehelperLoader.Render(""))
+			StylehelperTitle+StylehelperValue.Render(helperSession)+StylehelperLoader.Render(rename))
 	} else if m.prompt {
 		ret = lipgloss.JoinVertical(lipgloss.Top,
 			ret,
-			StylehelperTitle+StylehelperValue.Render(helperInput)+StylehelperLoader.Render(""))
+			StylehelperTitle+StylehelperValue.Render(helperInput)+StylehelperLoader.Render(rename))
 	} else if m.setting {
 		ret = lipgloss.JoinVertical(lipgloss.Top,
 			ret,
-			StylehelperTitle+StylehelperValue.Render(helperSetting)+StylehelperLoader.Render(""))
+			StylehelperTitle+StylehelperValue.Render(helperSetting)+StylehelperLoader.Render(rename))
 	} else {
 		ret = lipgloss.JoinVertical(lipgloss.Top,
 			ret,
-			StylehelperTitle+StylehelperValue.Render("")+StylehelperLoader.Render(""))
+			StylehelperTitle+StylehelperValue.Render("")+StylehelperLoader.Render(rename))
 	}
 	return ret
 }

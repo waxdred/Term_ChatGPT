@@ -29,25 +29,15 @@ var (
 	grey       = "#8D908B"
 	yellow     = "#FF8C00"
 	pink       = "#FF4D86"
+	pinkDark   = "#B341E7"
 	darkGrey   = "#343433"
 	greyHelper = "#515150"
 
-	titleStyle = func() lipgloss.Style {
-		b := lipgloss.RoundedBorder()
-		b.Right = "├"
-		return lipgloss.NewStyle().BorderStyle(b).Padding(0, 1)
-	}()
 	styleborderTop       = lipgloss.NewStyle().Foreground(lipgloss.Color(blue))
 	styleborderTopSelect = lipgloss.NewStyle().Foreground(lipgloss.Color(blueSelect))
 	styleborderTitle     = lipgloss.NewStyle().Foreground(lipgloss.Color(purple))
 
 	styleSpinner = lipgloss.NewStyle().Foreground(lipgloss.Color(purple))
-
-	infoStyle = func() lipgloss.Style {
-		b := lipgloss.RoundedBorder()
-		b.Left = "┤"
-		return titleStyle.Copy().BorderStyle(b)
-	}()
 
 	styleBorder = lipgloss.NewStyle().
 			Border(lipgloss.RoundedBorder()).
@@ -106,17 +96,23 @@ var (
 	styleSettingValue = lipgloss.NewStyle().
 				Foreground(lipgloss.Color(yellow))
 
+	StyleUTF = lipgloss.NewStyle().Background(lipgloss.Color(pinkDark)).
+			Height(1).Width(7).
+			Render(" UTF-8 ")
+	StyleCreate = lipgloss.NewStyle().Background(lipgloss.Color(purple)).
+			Height(1).Width(WeightSet - 7).
+			Render("  By waxdred ")
 	StylehelperTitle = lipgloss.NewStyle().Background(lipgloss.Color(pink)).
 				MarginLeft(2).
 				Height(1).Width(8).
 				Render(" HELPER ")
 	StylehelperValue = lipgloss.NewStyle().Background(lipgloss.Color(darkGrey)).
-				Height(1).Width(WeightChat - 8)
+				Height(1).Width(WeightChat - 5)
 	StylehelperLoader = lipgloss.NewStyle().Background(lipgloss.Color(purple)).
-				Height(1).Width(WeightSet + 4)
+				Height(1).Width(WeightSet)
 	colorHelper   = lipgloss.NewStyle().Foreground(lipgloss.Color(greyHelper))
 	Stylehelper   = lipgloss.NewStyle().Foreground(lipgloss.Color(grey)).MarginLeft(2)
-	helperInput   = colorHelper.Render(" <C-y> copy <Tab> Cycle over windows")
-	helperSetting = colorHelper.Render(" ⮃ up/down <C-k> or <C-j> change value")
-	helperSession = colorHelper.Render(" ⮃ up/down <Enter> Select")
+	helperInput   = colorHelper.Render(" <C-y>: copy <Tab>: Cycle over windows")
+	helperSetting = colorHelper.Render(" <C-k>: up <C-j>: down (+/-)")
+	helperSession = colorHelper.Render(" <C-k>: up <C-j>: down <C-r>: rename <C-d>: delete")
 )

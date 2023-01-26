@@ -6,12 +6,10 @@ import (
 	gogpt "github.com/sashabaranov/go-gpt3"
 )
 
-func requetOpenAI(chatGpt *ChatGpt, input string) {
+func requetOpenAI(chatGpt *ChatGpt, curr Session, input string) {
 	chatGpt.Lock()
 	chatGpt.routine = true
-	input = strings.Replace(input, "'", " ", -1)
-	chatGpt.history = append(chatGpt.history, input)
-	inp := strings.Join(chatGpt.history, " ")
+	inp := curr.Msg
 	chatGpt.Unlock()
 	req := gogpt.CompletionRequest{
 		Model:            chatGpt.Model,

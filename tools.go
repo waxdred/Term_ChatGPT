@@ -26,6 +26,8 @@ func TopBorderText(size int, title string, margin bool, stl bool) string {
 	right := strings.Repeat(Top, tmp)
 	if tmp*2+len(title) < size {
 		right = strings.Repeat(Top, tmp+1)
+	} else if tmp*2+len(title) > size {
+		right = strings.Repeat(Top, tmp-1)
 	}
 	ret = style.Render(
 		TopLeft,
