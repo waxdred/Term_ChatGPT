@@ -17,6 +17,11 @@ The main benefits of this plugin include:
 - A simple and user-friendly interface that makes it easy for anyone to use.
 - Plugin create in Goland using library `charmbracelet/bubbles`
 
+## Table of Contents
+- [Requirements] (#Requirements)
+- [Installation] (#Installation)
+- [Usage] (#Usage)
+- [Setting] (# Setting)
 ## App chatGpt can be use on your terminal or on Neovim </br></br>
 
 ![](https://imgur.com/KCCKaR6.png)
@@ -61,7 +66,7 @@ cd Term_ChatGPT/bin
 
 Plugin exposes following commands on Neovim:
 - `:ChatGPT` command which opens interactive window.
-### Setting:
+## Setting
 #### Setting viewPort
 - The setting can be change easily </br> </br>
 ![](https://i.imgur.com/5TFJflJ.gif) </br></br>
