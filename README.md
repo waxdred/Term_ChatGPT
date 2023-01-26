@@ -18,10 +18,10 @@ The main benefits of this plugin include:
 - Plugin create in Goland using library `charmbracelet/bubbles`
 
 ## Table of Contents
-- [Requirements] (#Requirements)
-- [Installation] (#Installation)
-- [Usage] (#Usage)
-- [Setting] (# Setting)
+- [Requirements](#Requirements)
+- [Installation](#Installation)
+- [Usage](#Usage)
+- [Setting](#Setting)
 ## App chatGpt can be use on your terminal or on Neovim </br></br>
 
 ![](https://imgur.com/KCCKaR6.png)
