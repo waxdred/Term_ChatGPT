@@ -163,13 +163,15 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if k := msg.String(); k == "esc" || k == "ctrl+c" {
 			return m, tea.Quit
 		}
+		if c := msg.String(); c == "k" || c == "u" || c == "b" || c == "d" || c == "j" {
+			if m.prompt {
+				m.textarea, tiCmd = m.textarea.Update(msg)
+			} else if m.rename {
+				m.textinput, reCmd = m.textinput.Update(msg)
+			}
+			return m, tea.Batch(tiCmd, vpCmd, spCmd, reCmd)
+		}
 		switch msg.String() {
-		case "k":
-			m.textarea, tiCmd = m.textarea.Update(msg)
-			return m, tea.Batch(tiCmd, vpCmd, spCmd, reCmd)
-		case "j":
-			m.textarea, tiCmd = m.textarea.Update(msg)
-			return m, tea.Batch(tiCmd, vpCmd, spCmd, reCmd)
 		case "ctrl+y":
 			if m.last_answer != "" {
 				clipboard.WriteAll(m.last_answer)
@@ -240,6 +242,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.chatGpt.FrequencyPenalty = m.curr_session.Setting.FrequencyPenalty
 				m.chatGpt.TopP = m.curr_session.Setting.TopP
 				m.chatGpt.Temperature = m.curr_session.Setting.Temperature
+				m.selectorSession = 1
+				m.session = false
+				m.prompt = true
 			}
 		case tea.KeyTab:
 			m.rename = false
@@ -287,7 +292,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	}
 
-	m.textarea, tiCmd = m.textarea.Update(msg)
+	if m.prompt {
+		m.textarea, tiCmd = m.textarea.Update(msg)
+	}
 	m.viewport, vpCmd = m.viewport.Update(msg)
 	if m.rename {
 		m.textinput, reCmd = m.textinput.Update(msg)
