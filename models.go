@@ -107,6 +107,14 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		spCmd tea.Cmd
 		reCmd tea.Cmd
 	)
+	if !m.ready {
+		m.viewport = viewport.New(WeightChat, Wheight-8)
+		m.viewport.HighPerformanceRendering = useHighPerformanceRenderer
+		text := wrap.String(m.content, WeightChat)
+		m.viewport.SetContent(text)
+		m.ready = true
+		m.viewport.GotoBottom()
+	}
 	if m.chatGpt.rep != "" {
 		m.chatGpt.Lock()
 		defer m.chatGpt.Unlock()
@@ -156,6 +164,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		}
 		switch msg.String() {
+		case "k":
+			m.textarea, tiCmd = m.textarea.Update(msg)
+			return m, tea.Batch(tiCmd, vpCmd, spCmd, reCmd)
+		case "j":
+			m.textarea, tiCmd = m.textarea.Update(msg)
+			return m, tea.Batch(tiCmd, vpCmd, spCmd, reCmd)
 		case "ctrl+y":
 			if m.last_answer != "" {
 				clipboard.WriteAll(m.last_answer)
@@ -200,7 +214,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.rename = false
 				m.textinput.Reset()
 				m.sessions = m.sessions.init()
-			} else if m.prompt && m.typing && !m.chatGpt.routine && m.textarea.Value() != "" {
+			} else if m.prompt && m.textarea.Value() != "" {
 				m.typing = false
 				m.curr_session.Msg = m.curr_session.Msg + " " + m.textarea.Value()
 				render := wrap.String(m.textarea.Value(), WeightChat/3)
@@ -208,8 +222,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.content = m.content + "\n" + styleUser.Render(render) + "\n"
 				go requetOpenAI(m.chatGpt, m.curr_session, m.textarea.Value())
 				if m.chatGpt.routine {
-					tea.ExitAltScreen()
-					return m, nil
+					m.textarea.Reset()
+					return m, tea.Batch(tiCmd, vpCmd, spCmd, reCmd)
 				}
 				m.textarea.Reset()
 				m.textarea.Placeholder = "Loading..."
@@ -239,7 +253,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			} else if m.session {
 				m.session = false
 				m.prompt = true
-				m.typing = true
 			}
 		case tea.KeyCtrlK:
 			if m.setting {
@@ -272,21 +285,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.textinput.Focus()
 			}
 		}
-	case tea.WindowSizeMsg:
-		if !m.ready {
-			m.viewport = viewport.New(WeightChat, Wheight-8)
-			m.viewport.HighPerformanceRendering = useHighPerformanceRenderer
-			text := wrap.String(m.content, WeightChat)
-			m.viewport.SetContent(text)
-			m.ready = true
-			m.viewport.GotoBottom()
-		}
 	}
 
-	if m.prompt {
-		m.textarea, tiCmd = m.textarea.Update(msg)
-		m.viewport, vpCmd = m.viewport.Update(msg)
-	}
+	m.textarea, tiCmd = m.textarea.Update(msg)
+	m.viewport, vpCmd = m.viewport.Update(msg)
 	if m.rename {
 		m.textinput, reCmd = m.textinput.Update(msg)
 	}
