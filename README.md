@@ -20,8 +20,10 @@ The main benefits of this plugin include:
 ## App chatGpt can be use on your terminal or on Neovim
 
 ## Running on Neovim
+
 - App can be running on the terminal or neovim
 ![](https://i.imgur.com/lfvtAmA.gif)
+
 - The setting can be change easily 
 ![](https://i.imgur.com/5TFJflJ.gif)
 
