@@ -78,6 +78,9 @@ Plugin exposes following commands on Neovim:
 <details>
 <summary>Available keybindings</summary>
 <br>
+  <lu>
+    <li></li>
+  </lu>
 - `<Esc>` to close chat window.
 - `scroll mouse` scroll up chat window.
 - `scroll mouse` scroll down chat window.
