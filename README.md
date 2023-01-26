@@ -22,7 +22,7 @@ The main benefits of this plugin include:
 ## Running on Neovim
 
 - App can be running on the terminal or neovim
-![](https://i.imgur.com/lfvtAmA.gif)
+![](https://imgur.com/KCCKaR6.png)
 
 - The setting can be change easily 
 ![](https://i.imgur.com/5TFJflJ.gif)
