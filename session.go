@@ -68,7 +68,7 @@ func (s Sessions) rename(rename string, idx int64) error {
 	news := rename + ".json"
 	session := Session{}
 	for i, se := range s {
-		if i+1 == int(idx) {
+		if i == int(idx)-1 {
 			session = se
 		}
 	}
@@ -94,7 +94,7 @@ func (s Sessions) deleteFile(idx int) Sessions {
 	var tmp []Session
 	for i, se := range s {
 		if i+1 == idx {
-			name := strings.Replace(se.Created_at, " ", "", -1)
+			name := strings.Replace(se.Title, " ", "", -1)
 			filename := Path + name + ".json"
 			os.Remove(filename)
 		} else {

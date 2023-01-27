@@ -170,6 +170,15 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Batch(tiCmd, vpCmd, spCmd, reCmd)
 		}
 		switch msg.String() {
+		case "ctrl+v":
+			if m.prompt {
+				clip, err := clipboard.ReadAll()
+				if err != nil {
+					return m, nil
+				}
+				value := m.textarea.Value() + clip
+				m.textarea.SetValue(value)
+			}
 		case "ctrl+y":
 			if m.last_answer != "" {
 				clipboard.WriteAll(m.last_answer)
@@ -361,6 +370,7 @@ func (m model) View() string {
 		rename = m.textinput.View()
 	} else {
 		rename = StyleUTF + StyleCreate
+		rename = StylehelperLoader.Render(rename)
 	}
 	if m.session {
 		ret = lipgloss.JoinVertical(
@@ -378,7 +388,7 @@ func (m model) View() string {
 	} else {
 		ret = lipgloss.JoinVertical(lipgloss.Top,
 			ret,
-			status+StylehelperValue.Render("")+StylehelperLoader.Render(rename))
+			status+StylehelperValue.Render("")+rename)
 	}
 	return ret
 }

@@ -114,9 +114,11 @@ var (
 				Height(1).Width(WeightChat - 5)
 	StylehelperLoader = lipgloss.NewStyle().Background(lipgloss.Color(purple)).
 				Height(1).Width(WeightSet)
+	StylehelperLoaderRename = lipgloss.NewStyle().
+				Height(1).Width(WeightSet)
 	colorHelper   = lipgloss.NewStyle().Foreground(lipgloss.Color(greyHelper))
 	Stylehelper   = lipgloss.NewStyle().Foreground(lipgloss.Color(grey)).MarginLeft(2)
-	helperInput   = colorHelper.Render(" <C-n>: new Session <C-y>: copy <Tab>: Cycle over windows")
+	helperInput   = colorHelper.Render(" <C-n>: new Session <C-y>: copy <C-v>: past")
 	helperSetting = colorHelper.Render(" <C-k>: up <C-j>: down (+/-)")
 	helperSession = colorHelper.Render(" <C-k>: up <C-j>: down <C-r>: rename <C-d>: delete")
 	errorApi      = "Error OPENAI_API_KEY env missing:\nadd OPENAI_API_KEY=<api> to your env\nfor get your api:\nhttps://beta.openai.com/account/api-keys"
