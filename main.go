@@ -15,10 +15,10 @@ import (
 )
 
 var (
-	temperature = flag.Float64("temp", 0, "chatGpt temperature")
-	top         = flag.Float64("top", 0.5, "chatGpt topP")
+	temperature = flag.Float64("temp", 0.7, "chatGpt temperature")
+	top         = flag.Float64("top", 0.9, "chatGpt topP")
 	frequency   = flag.Float64("freg", 0.5, "chatGpt frequency")
-	presence    = flag.Float64("pres", 0.5, "chatGpt presence")
+	presence    = flag.Float64("pres", 0.8, "chatGpt presence")
 	token       = flag.Int64("token", 100, "chatGpt presence")
 )
 
