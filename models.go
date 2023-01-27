@@ -37,9 +37,6 @@ type ChatGpt struct {
 
 func (chat *ChatGpt) Init() {
 	chat.api = os.Getenv("OPENAI_API_KEY")
-	if chat.api == "" {
-		os.Exit(-1)
-	}
 	chat.user = os.Getenv("USER") + ":"
 	chat.Model = "text-davinci-003"
 	chat.c = gogpt.NewClient(chat.api)
@@ -93,6 +90,7 @@ type model struct {
 	selectorSession int64
 	typing          bool
 	last_answer     string
+	api             bool
 }
 
 func (m model) Init() tea.Cmd {
@@ -308,6 +306,9 @@ func (m model) View() string {
 	var session lipgloss.Style
 	var setting lipgloss.Style
 	var rename string
+	if !m.api {
+		m.viewport.SetContent(NoApi)
+	}
 	if m.prompt {
 		prompt = styleBorderPromptSelect
 	} else {
@@ -350,6 +351,12 @@ func (m model) View() string {
 		session.Render(m.sessions.getList(m.selectorSession)),
 	)
 	ret := lipgloss.JoinHorizontal(lipgloss.Top, ChatGptPrompt, History)
+	status := ""
+	if m.chatGpt.routine {
+		status = statusLoading
+	} else {
+		status = statusStart
+	}
 	if m.rename && m.session {
 		rename = m.textinput.View()
 	} else {
@@ -359,19 +366,19 @@ func (m model) View() string {
 		ret = lipgloss.JoinVertical(
 			lipgloss.Top,
 			ret,
-			StylehelperTitle+StylehelperValue.Render(helperSession)+StylehelperLoader.Render(rename))
+			status+StylehelperValue.Render(helperSession)+StylehelperLoader.Render(rename))
 	} else if m.prompt {
 		ret = lipgloss.JoinVertical(lipgloss.Top,
 			ret,
-			StylehelperTitle+StylehelperValue.Render(helperInput)+StylehelperLoader.Render(rename))
+			status+StylehelperValue.Render(helperInput)+StylehelperLoader.Render(rename))
 	} else if m.setting {
 		ret = lipgloss.JoinVertical(lipgloss.Top,
 			ret,
-			StylehelperTitle+StylehelperValue.Render(helperSetting)+StylehelperLoader.Render(rename))
+			status+StylehelperValue.Render(helperSetting)+StylehelperLoader.Render(rename))
 	} else {
 		ret = lipgloss.JoinVertical(lipgloss.Top,
 			ret,
-			StylehelperTitle+StylehelperValue.Render("")+StylehelperLoader.Render(rename))
+			status+StylehelperValue.Render("")+StylehelperLoader.Render(rename))
 	}
 	return ret
 }

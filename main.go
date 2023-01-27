@@ -26,8 +26,14 @@ func main() {
 	flag.Parse()
 	var chatGpt ChatGpt
 	var sessions Sessions
+	var api bool
 	sessions.init()
 	chatGpt.Init()
+	if chatGpt.api == "" {
+		api = false
+	} else {
+		api = true
+	}
 	s := spinner.New()
 	s.Spinner = spinner.Dot
 	// Load some text for our viewport
@@ -64,6 +70,7 @@ func main() {
 			selectorSetting: 1,
 			selectorSession: 1,
 			typing:          true,
+			api:             api,
 		},
 		tea.WithAltScreen(),       // use the full size of the terminal in its "alternate screen buffer"
 		tea.WithMouseCellMotion(), // turn on mouse support so we can track the mouse wheel

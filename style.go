@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/charmbracelet/lipgloss"
+	"github.com/muesli/reflow/wrap"
 	"golang.org/x/crypto/ssh/terminal"
 )
 
@@ -102,17 +103,26 @@ var (
 	StyleCreate = lipgloss.NewStyle().Background(lipgloss.Color(purple)).
 			Height(1).Width(WeightSet - 7).
 			Render("  By waxdred ")
-	StylehelperTitle = lipgloss.NewStyle().Background(lipgloss.Color(pink)).
+
+	StylehelperTitle = lipgloss.NewStyle().
 				MarginLeft(2).
-				Height(1).Width(8).
-				Render(" HELPER ")
+				Height(1).Width(8)
+
+	statusStart      = StylehelperTitle.Background(lipgloss.Color(pink)).Render(" STATUS")
+	statusLoading    = StylehelperTitle.Background(lipgloss.Color(purple)).Render(" STATUS")
 	StylehelperValue = lipgloss.NewStyle().Background(lipgloss.Color(darkGrey)).
 				Height(1).Width(WeightChat - 5)
 	StylehelperLoader = lipgloss.NewStyle().Background(lipgloss.Color(purple)).
 				Height(1).Width(WeightSet)
 	colorHelper   = lipgloss.NewStyle().Foreground(lipgloss.Color(greyHelper))
 	Stylehelper   = lipgloss.NewStyle().Foreground(lipgloss.Color(grey)).MarginLeft(2)
-    helperInput   = colorHelper.Render(" <C-n>: new Session <C-y>: copy <Tab>: Cycle over windows")
+	helperInput   = colorHelper.Render(" <C-n>: new Session <C-y>: copy <Tab>: Cycle over windows")
 	helperSetting = colorHelper.Render(" <C-k>: up <C-j>: down (+/-)")
 	helperSession = colorHelper.Render(" <C-k>: up <C-j>: down <C-r>: rename <C-d>: delete")
+	errorApi      = "Error OPENAI_API_KEY env missing:\nadd OPENAI_API_KEY=<api> to your env\nfor get your api:\nhttps://beta.openai.com/account/api-keys"
+	errorApiWrap  = wrap.String(errorApi, WeightChat/2)
+	NoApi         = lipgloss.NewStyle().
+			Foreground(lipgloss.Color("#FF2727")).
+			Border(lipgloss.RoundedBorder()).
+			Render(errorApiWrap)
 )
