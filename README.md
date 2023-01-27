@@ -17,15 +17,14 @@ The main benefits of this plugin include:
 - A simple and user-friendly interface that makes it easy for anyone to use.
 - Plugin create in Goland using library `charmbracelet/bubbles`
 
-## App chatGpt can be use on your terminal or on Neovim
+## Table of Contents
+- [Requirements](#Requirements)
+- [Installation](#Installation)
+- [Usage](#Usage)
+- [Setting](#Setting)
+## App chatGpt can be use on your terminal or on Neovim </br></br>
 
-## Running on Neovim
-
-- App can be running on the terminal or neovim </br> </br>
 ![](https://imgur.com/KCCKaR6.png)
-
-- The setting can be change easily </br> </br>
-![](https://i.imgur.com/5TFJflJ.gif)
 
 ## Requirements
 - Neovim: The plugin is designed to work with Neovim, so you'll need to have Neovim installed on your machine. You should have at least version 0.5.0 of Neovim, but it's recommended to use the latest version for the best experience.
@@ -67,8 +66,23 @@ cd Term_ChatGPT/bin
 
 Plugin exposes following commands on Neovim:
 - `:ChatGPT` command which opens interactive window.
-### Setting:
+- on terminal can use the flag:
+```
+  flag list:
+    flag      | default
+    -temp     | 0
+    -top      | 0.5
+    -freg     | 0.5
+    -pres     | 0.5
+    -token    | 100
+    
+  exemple:
+    ./chatGPT -temp=0 -top=1 -freg=0.5 -pres=0.6 -token=30
+```
+## Setting
 #### Setting viewPort
+- The setting can be change easily </br> </br>
+![](https://i.imgur.com/5TFJflJ.gif) </br></br>
 - temperature:`0 | 1`
 - topP: `0 | 1`
 - frequency: `-2 | 2`
@@ -79,21 +93,20 @@ Plugin exposes following commands on Neovim:
 <summary>Available keybindings</summary>
 <br>
   <lu>
-    <li></li>
-    <li>`<Esc>` to close chat window.</li>
-    <li>`scroll mouse` scroll up chat window.</li>
-    <li>`scroll mouse` scroll down chat window.</li>
-    <li>`<C-y>` to copy/yank last answer.</li>
-    <li>`<C-n>` Start new session.</li>
-    <li>`<Tab>` Cycle over windows.</li>
+    <li>< Esc > to close chat window.</li>
+    <li>scroll mouse scroll up chat window.</li>
+    <li>scroll mouse scroll down chat window.</li>
+    <li>< C-y > to copy/yank last answer.</li>
+    <li>< C-n > Start new session.</li>
+    <li>< Tab > Cycle over windows.</li>
     <li>Setting Window</li>
-    <li>`< + >` [Change value selection] up the value</li>
-    <li>`< - >` [Change value selection] down the value</li>
-    <li>`<C-k>` [Navigate] with arrow</li>
-    <li>`<C-j>` [Navigate] with arrow</li>
+    <li>< + > [Change value selection] up the value</li>
+    <li>< - > [Change value selection] down the value</li>
+    <li>< C-k > [Navigate] with arrow</li>
+    <li>< C-j > [Navigate] with arrow</li>
     <li>Session Window</li>
-    <li>`<Enter>`Select Session</li>
-    <li>`C-d` deleted Session</li>
-    <li>`C-r`rename Session</li>
+    <li>< Enter > Select Session</li>
+    <li>< C-d > deleted Session</li>
+    <li>< C-r> rename Session</li>
   </lu>
 </details>
