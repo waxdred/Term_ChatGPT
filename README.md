@@ -51,6 +51,10 @@ require github.com/voldikss/vim-floaterm
 ```lua
 -- Packer
 use { "github.com/waxdred/Term_ChatGPT" }
+
+-- After install with packer use:
+:ChatGPTInstall
+
 -- vim-floaterm is for run chatGpt on your terminal
 use { "github.com/voldikss/vim-floaterm" }
 ```
@@ -58,7 +62,9 @@ use { "github.com/voldikss/vim-floaterm" }
 - Using on your terminal
 ```
 git clone https://github.com/waxdred/Term_ChatGPT.git 
-cd Term_ChatGPT/bin
+cd Term_chatGPT
+./install.sh
+cd bin
 ./chatGPT
 ```
 
