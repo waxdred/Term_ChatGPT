@@ -2,10 +2,16 @@
 
 FILE=~/.local/share/nvim/site/pack/packer/start/Term_ChatGPT/bin/chatGPT
 DIRFILE=~/.local/share/nvim/site/pack/packer/start/Term_ChatGPT
-if [ -f "$FILE" ]; then
-    echo "$FILE exists."
-else 
-    cd $DIRFILE
-    go build . 
+if [ $# -gt 0 ]; then
+    if [ ! -f "$FILE" ]; then
+        cd $DIRFILE
+        go build . 
+        mkdir bin
+        mv Term_ChatGPT ./bin/chatGPT
+    fi
+else
+    go build .
+    mkdir bin
     mv Term_ChatGPT ./bin/chatGPT
 fi
+

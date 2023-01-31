@@ -8,5 +8,5 @@ end, {})
 
 
 vim.api.nvim_create_user_command("ChatGPTInstall", function()
-    os.execute("sh ~/.local/share/nvim/site/pack/packer/start/Term_ChatGPT/install.sh")
+    os.execute("sh ~/.local/share/nvim/site/pack/packer/start/Term_ChatGPT/install.sh packer")
 end,{})
