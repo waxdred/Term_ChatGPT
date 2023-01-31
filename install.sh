@@ -6,6 +6,7 @@ if [ -f "$FILE" ]; then
     echo "$FILE exists."
 else 
     cd $DIRFILE
-    go build . 
+    go build .
+    mkdir bin
     mv Term_ChatGPT ./bin/chatGPT
 fi
