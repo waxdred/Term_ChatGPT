@@ -116,3 +116,8 @@ Plugin exposes following commands on Neovim:
     <li>< C-r> rename Session</li>
   </lu>
 </details>
+### Contributing
+Contributions to this project are welcome. If you'd like to contribute, please fork the repository and make your changes. Then, open a pull request and I'll review your changes.
+
+## License
+This project is licensed under the MIT License.
